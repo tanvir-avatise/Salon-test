@@ -1,0 +1,205 @@
+/* ============================================================
+   LUMÉRA — Design System
+   Palette · Type · Motion tokens · Base reset
+   ============================================================ */
+
+:root {
+  /* — Core palette — */
+  --blush: #f2ebe6; /* base blush-nude          */
+  --blush-deep: #e7dcd3; /* slightly deeper blush    */
+  --ink: #2a2024; /* deep plum ink            */
+  --ink-soft: #3a2f34; /* softened plum            */
+  --rose-gold: #c99a8a; /* accent                   */
+  --rose-gold-lo: #b7897a;
+  --emerald: #4a6b5c; /* optional secondary       */
+
+  /* — Dark stage (the "raw" beginning) — */
+  --stage-0: #171215; /* darkest                  */
+  --stage-1: #201a1d;
+  --stage-2: #2a2024;
+
+  /* — Derived / functional — */
+  --paper: var(--blush);
+  --text-on-dark: #efe6df;
+  --text-on-dark-dim: rgba(239, 230, 223, 0.58);
+  --text-on-light: var(--ink);
+  --text-on-light-dim: rgba(42, 32, 36, 0.6);
+  --hairline-dark: rgba(239, 230, 223, 0.14);
+  --hairline-light: rgba(42, 32, 36, 0.14);
+
+  /* — Type — */
+  --serif: "Fraunces", "Times New Roman", serif;
+  --sans: "Inter", "Neue Montreal", system-ui, -apple-system, sans-serif;
+
+  /* — Motion — */
+  --ease-indulgent: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-soft: cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* — Layout — */
+  --gutter: clamp(1.25rem, 5vw, 5rem);
+  --maxw: 1440px;
+
+  color-scheme: dark;
+}
+
+/* ---------- Reset ---------- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  scroll-behavior: auto; /* Lenis drives scrolling */
+}
+
+body {
+  font-family: var(--sans);
+  background: var(--stage-0);
+  color: var(--text-on-dark);
+  font-weight: 400;
+  line-height: 1.55;
+  overflow-x: hidden;
+  cursor: none; /* replaced by custom cursor; falls back when disabled */
+}
+
+/* Restore native cursor when custom cursor is disabled (touch / reduced-motion) */
+body.native-cursor,
+body.native-cursor * {
+  cursor: auto;
+}
+body.native-cursor a,
+body.native-cursor button,
+body.native-cursor [role="button"] {
+  cursor: pointer;
+}
+
+img,
+video,
+canvas,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: none;
+}
+
+ul {
+  list-style: none;
+}
+
+:focus-visible {
+  outline: 2px solid var(--rose-gold);
+  outline-offset: 4px;
+  border-radius: 2px;
+}
+
+/* Lenis */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+/* ---------- Type utilities ---------- */
+.eyebrow {
+  font-family: var(--sans);
+  font-size: clamp(0.66rem, 0.85vw, 0.78rem);
+  letter-spacing: 0.34em;
+  text-transform: uppercase;
+  font-weight: 500;
+  color: var(--rose-gold);
+}
+
+.serif-display {
+  font-family: var(--serif);
+  font-weight: 300;
+  line-height: 0.98;
+  letter-spacing: -0.01em;
+  font-optical-sizing: auto;
+}
+
+.section-title {
+  font-family: var(--serif);
+  font-weight: 300;
+  font-size: clamp(2rem, 5.5vw, 4.4rem);
+  line-height: 1.02;
+  letter-spacing: -0.015em;
+}
+
+.lede {
+  font-size: clamp(1.05rem, 1.6vw, 1.4rem);
+  line-height: 1.5;
+  font-weight: 300;
+  color: var(--text-on-dark-dim);
+}
+
+/* ---------- Section scaffolding ---------- */
+.section {
+  position: relative;
+  width: 100%;
+  padding: clamp(5rem, 12vh, 10rem) var(--gutter);
+}
+
+.section-inner {
+  width: 100%;
+  max-width: var(--maxw);
+  margin-inline: auto;
+}
+
+.on-light {
+  background: var(--paper);
+  color: var(--text-on-light);
+}
+.on-light .lede {
+  color: var(--text-on-light-dim);
+}
+
+/* ---------- Reveal primitives (JS-driven; CSS is the reduced-motion fallback) ---------- */
+[data-reveal] {
+  will-change: transform, opacity;
+}
+
+.a11y-visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ---------- Reduced motion: everything visible & static ---------- */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+  [data-reveal] {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}

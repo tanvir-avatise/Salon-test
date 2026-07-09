@@ -1,0 +1,100 @@
+.atmosphere {
+  position: relative;
+  min-height: 90vh;
+  display: grid;
+  place-items: center;
+  padding: 8vh var(--gutter);
+  overflow: hidden;
+  background: #100c0e;
+  text-align: center;
+  isolation: isolate;
+}
+
+.atmosphere__bg {
+  position: absolute;
+  inset: -20% 0;
+  z-index: -2;
+}
+
+.atmosphere__orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(70px);
+  opacity: 0.55;
+  mix-blend-mode: screen;
+}
+.atmosphere__orb--1 {
+  width: 46vmax;
+  height: 46vmax;
+  left: -8%;
+  top: 4%;
+  background: radial-gradient(circle, #c99a8a, transparent 65%);
+  animation: drift1 18s ease-in-out infinite;
+}
+.atmosphere__orb--2 {
+  width: 38vmax;
+  height: 38vmax;
+  right: -6%;
+  bottom: -6%;
+  background: radial-gradient(circle, #8a5a48, transparent 65%);
+  animation: drift2 22s ease-in-out infinite;
+}
+.atmosphere__orb--3 {
+  width: 30vmax;
+  height: 30vmax;
+  left: 40%;
+  top: 30%;
+  background: radial-gradient(circle, #4a6b5c, transparent 60%);
+  opacity: 0.3;
+  animation: drift3 26s ease-in-out infinite;
+}
+
+@keyframes drift1 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(8%, 6%) scale(1.12); }
+}
+@keyframes drift2 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(-7%, -5%) scale(1.15); }
+}
+@keyframes drift3 {
+  0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.3; }
+  50% { transform: translate(5%, -8%) scale(1.2); opacity: 0.45; }
+}
+
+.atmosphere__grain {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: radial-gradient(circle at 50% 50%, transparent 40%, rgba(16, 12, 14, 0.85));
+}
+
+.atmosphere__line {
+  font-size: clamp(2rem, 6vw, 5rem);
+  font-weight: 300;
+  font-style: italic;
+  color: var(--text-on-dark);
+  line-height: 1.1;
+  max-width: 18ch;
+  text-shadow: 0 0 50px rgba(16, 12, 14, 0.8);
+}
+.atmosphere__line span {
+  display: inline-block;
+}
+
+.atmosphere__cap {
+  position: absolute;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.66rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--text-on-dark-dim);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .atmosphere__orb {
+    animation: none;
+  }
+}

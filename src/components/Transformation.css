@@ -1,0 +1,115 @@
+.transform {
+  background: linear-gradient(180deg, var(--stage-2), var(--stage-1));
+  overflow: hidden;
+}
+
+.transform__inner {
+  display: grid;
+  gap: clamp(2.5rem, 6vw, 5rem);
+  align-items: center;
+}
+@media (min-width: 900px) {
+  .transform__inner {
+    grid-template-columns: 0.85fr 1.15fr;
+  }
+}
+
+.transform__copy {
+  display: flex;
+  flex-direction: column;
+  gap: 1.4rem;
+}
+.transform__line {
+  font-size: clamp(2rem, 5vw, 4rem);
+  font-style: italic;
+  font-weight: 300;
+  line-height: 1.05;
+  color: var(--text-on-dark);
+}
+
+.transform__frame-wrap {
+  width: 100%;
+}
+.transform__frame {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  border-radius: 4px;
+  overflow: hidden;
+  touch-action: none;
+  cursor: ew-resize;
+  box-shadow: 0 40px 120px -40px rgba(0, 0, 0, 0.7);
+}
+
+.transform__layer {
+  position: absolute;
+  inset: 0;
+}
+.transform__before {
+  z-index: 2;
+}
+.transform__after {
+  z-index: 1;
+  filter: saturate(1.05);
+}
+
+.transform__tag {
+  position: absolute;
+  bottom: 1rem;
+  font-size: 0.66rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  padding: 0.4rem 0.8rem;
+  border-radius: 999px;
+  backdrop-filter: blur(6px);
+  z-index: 3;
+}
+.transform__tag--before {
+  left: 1rem;
+  color: var(--text-on-dark-dim);
+  background: rgba(20, 20, 24, 0.4);
+}
+.transform__tag--after {
+  right: 1rem;
+  color: var(--ink);
+  background: rgba(242, 235, 230, 0.75);
+}
+
+.transform__handle {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: rgba(242, 235, 230, 0.85);
+  transform: translateX(-50%);
+  z-index: 4;
+  box-shadow: 0 0 24px rgba(201, 154, 138, 0.6);
+}
+.transform__grip {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: rgba(242, 235, 230, 0.95);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.4);
+}
+.transform__grip i {
+  width: 2px;
+  height: 14px;
+  background: var(--ink);
+  border-radius: 2px;
+  opacity: 0.6;
+}
+.transform__handle:focus-visible {
+  outline: none;
+}
+.transform__handle:focus-visible .transform__grip {
+  box-shadow: 0 0 0 3px var(--rose-gold), 0 6px 24px rgba(0, 0, 0, 0.4);
+}

@@ -1,0 +1,50 @@
+.sound-toggle {
+  display: inline-grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: 1px solid var(--hairline-dark);
+  transition: border-color 0.4s var(--ease-soft), background 0.4s var(--ease-soft);
+}
+.sound-toggle:hover {
+  border-color: rgba(201, 154, 138, 0.6);
+}
+.sound-toggle.is-on {
+  border-color: var(--rose-gold);
+  background: rgba(201, 154, 138, 0.12);
+}
+
+.sound-toggle__bars {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  height: 14px;
+}
+.sound-toggle__bars i {
+  width: 2px;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--text-on-dark-dim);
+  transition: background 0.4s var(--ease-soft);
+}
+.sound-toggle.is-on .sound-toggle__bars i {
+  background: var(--rose-gold);
+  animation: eq 1.1s var(--ease-soft) infinite;
+}
+.sound-toggle.is-on .sound-toggle__bars i:nth-child(1) { animation-delay: -0.9s; }
+.sound-toggle.is-on .sound-toggle__bars i:nth-child(2) { animation-delay: -0.5s; }
+.sound-toggle.is-on .sound-toggle__bars i:nth-child(3) { animation-delay: -0.7s; }
+.sound-toggle.is-on .sound-toggle__bars i:nth-child(4) { animation-delay: -0.2s; }
+
+@keyframes eq {
+  0%, 100% { height: 4px; }
+  50% { height: 13px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sound-toggle.is-on .sound-toggle__bars i {
+    animation: none;
+    height: 9px;
+  }
+}

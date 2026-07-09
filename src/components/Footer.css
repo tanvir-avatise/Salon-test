@@ -1,0 +1,119 @@
+.footer {
+  background: var(--stage-0);
+  padding: clamp(4rem, 10vh, 8rem) var(--gutter) 2.5rem;
+  border-top: 1px solid var(--hairline-dark);
+}
+
+.footer__lead {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  margin-bottom: clamp(2.5rem, 6vw, 4rem);
+}
+.footer__brand {
+  font-size: clamp(2.6rem, 8vw, 5rem);
+  color: var(--text-on-dark);
+  letter-spacing: 0.03em;
+}
+.footer__tagline {
+  font-size: 0.8rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--text-on-dark-dim);
+}
+
+.footer__cols {
+  display: grid;
+  gap: clamp(2rem, 5vw, 3.5rem);
+  padding-bottom: clamp(2.5rem, 6vw, 4rem);
+  border-bottom: 1px solid var(--hairline-dark);
+}
+@media (min-width: 760px) {
+  .footer__cols {
+    grid-template-columns: 1fr 1fr 1.4fr;
+  }
+}
+
+.footer__col h3 {
+  font-family: var(--sans);
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--rose-gold);
+  margin-bottom: 1.2rem;
+}
+
+.footer__hours {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+}
+.footer__hours li {
+  display: flex;
+  justify-content: space-between;
+  gap: 1.5rem;
+  font-size: 0.9rem;
+  color: var(--text-on-dark);
+  border-bottom: 1px solid var(--hairline-dark);
+  padding-bottom: 0.7rem;
+}
+.footer__hours li span:last-child {
+  color: var(--text-on-dark-dim);
+}
+
+.footer__address {
+  font-style: normal;
+  font-size: 0.95rem;
+  line-height: 1.7;
+  color: var(--text-on-dark);
+  margin-bottom: 1.2rem;
+}
+.footer__link {
+  display: block;
+  font-size: 0.9rem;
+  color: var(--text-on-dark-dim);
+  margin-bottom: 0.5rem;
+  transition: color 0.35s var(--ease-soft);
+}
+.footer__link:hover {
+  color: var(--rose-gold);
+}
+
+.footer__map-frame {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  min-height: 200px;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid var(--hairline-dark);
+}
+
+.footer__base {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.2rem;
+  margin-top: 2rem;
+}
+.footer__socials {
+  display: flex;
+  gap: 1.5rem;
+}
+.footer__socials a {
+  font-size: 0.85rem;
+  letter-spacing: 0.08em;
+  color: var(--text-on-dark);
+  position: relative;
+  transition: color 0.35s var(--ease-soft);
+}
+.footer__socials a:hover {
+  color: var(--rose-gold);
+}
+.footer__fine {
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  color: var(--text-on-dark-dim);
+}

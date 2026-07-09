@@ -1,0 +1,230 @@
+/* ============ Motion stage (Hero + Ritual) ============ */
+.stage {
+  position: relative;
+  width: 100%;
+  background: var(--stage-0);
+}
+
+.stage__sticky {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  height: 100svh;
+  overflow: hidden;
+  background-color: var(--stage-0);
+}
+
+.stage__canvas {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+
+.stage__fallback {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+}
+
+/* warm glow behind the object */
+.stage__glow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 90vmin;
+  height: 90vmin;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(
+    circle,
+    rgba(201, 154, 138, 0.45) 0%,
+    rgba(201, 154, 138, 0.12) 40%,
+    rgba(23, 18, 21, 0) 70%
+  );
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.2;
+}
+
+/* --- Hero overlay --- */
+.hero {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: clamp(5.5rem, 12vh, 8rem) var(--gutter) clamp(2rem, 6vh, 4rem);
+  text-align: center;
+  pointer-events: none;
+}
+
+.hero__eyebrow {
+  margin-bottom: auto;
+}
+
+.hero__name {
+  font-size: clamp(3.6rem, 15vw, 12rem);
+  letter-spacing: 0.02em;
+  line-height: 0.9;
+  color: var(--text-on-dark);
+  overflow: hidden;
+  text-shadow: 0 0 60px rgba(201, 154, 138, 0.25);
+}
+.hero__name span[aria-hidden] {
+  will-change: transform, opacity;
+}
+
+.hero__tagline {
+  margin-top: 1.1rem;
+  font-size: clamp(0.8rem, 1.4vw, 1rem);
+  letter-spacing: 0.36em;
+  text-transform: uppercase;
+  color: var(--text-on-dark-dim);
+}
+
+.hero__headline {
+  margin-top: auto;
+  font-size: clamp(1.4rem, 3.4vw, 2.6rem);
+  font-weight: 300;
+  font-style: italic;
+  color: var(--text-on-dark);
+}
+
+.hero__cue {
+  position: absolute;
+  left: 50%;
+  bottom: clamp(1.5rem, 4vh, 3rem);
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.7rem;
+  font-size: 0.66rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--text-on-dark-dim);
+  z-index: 4;
+}
+.hero__cue-line {
+  width: 1px;
+  height: 46px;
+  background: linear-gradient(var(--rose-gold), transparent);
+  animation: cue-drift 2.4s var(--ease-soft) infinite;
+  transform-origin: top;
+}
+@keyframes cue-drift {
+  0% { transform: scaleY(0); opacity: 0; }
+  40% { transform: scaleY(1); opacity: 1; }
+  100% { transform: scaleY(1) translateY(46px); opacity: 0; }
+}
+
+/* --- Ritual beats --- */
+.beats {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  padding: 0 var(--gutter);
+  pointer-events: none;
+}
+.beat {
+  grid-area: 1 / 1;
+  max-width: 20ch;
+  text-align: center;
+  opacity: 0;
+  will-change: transform, opacity;
+  padding: 2.4rem 2.6rem;
+  border-radius: 50%;
+  background: radial-gradient(
+    ellipse at center,
+    rgba(20, 14, 15, 0.55) 0%,
+    rgba(20, 14, 15, 0.28) 45%,
+    rgba(20, 14, 15, 0) 72%
+  );
+}
+.beat__index {
+  display: block;
+  font-family: var(--sans);
+  font-size: 0.72rem;
+  letter-spacing: 0.4em;
+  color: var(--rose-gold);
+  margin-bottom: 1.6rem;
+}
+.beat__line {
+  font-size: clamp(1.5rem, 3.6vw, 3rem);
+  font-weight: 300;
+  line-height: 1.15;
+  color: var(--text-on-dark);
+  text-shadow: 0 0 40px rgba(23, 18, 21, 0.6);
+}
+
+/* position beats toward the lower third so the bottle reads above them */
+@media (min-width: 860px) {
+  .beats {
+    align-items: flex-end;
+    padding-bottom: 12vh;
+  }
+  .beat {
+    max-width: 26ch;
+  }
+}
+
+/* ============ Static fallback (reduced motion) ============ */
+.stage-static {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: clamp(6rem, 12vh, 9rem) var(--gutter) 4rem;
+  background: radial-gradient(circle at 50% 40%, #241c20, var(--stage-0));
+  text-align: center;
+}
+.stage-static__hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+.stage-static .hero__name {
+  font-size: clamp(3.2rem, 12vw, 8rem);
+}
+.stage-static .hero__headline {
+  font-style: italic;
+  margin-top: 0.5rem;
+}
+.stage-static .bottle-fallback {
+  margin-top: 2rem;
+}
+
+.ritual-static {
+  background: var(--stage-1);
+}
+.ritual-static__list {
+  display: grid;
+  gap: 2.4rem;
+  margin-top: 3rem;
+}
+.ritual-static__list li {
+  display: flex;
+  gap: 1.5rem;
+  align-items: baseline;
+  max-width: 46ch;
+  font-family: var(--serif);
+  font-size: clamp(1.3rem, 3vw, 2rem);
+  font-weight: 300;
+  color: var(--text-on-dark);
+}
+.ritual-static__index {
+  font-family: var(--sans);
+  font-size: 0.72rem;
+  letter-spacing: 0.3em;
+  color: var(--rose-gold);
+}
+
+/* shared fallback bottle */
+.bottle-fallback {
+  filter: drop-shadow(0 20px 60px rgba(201, 154, 138, 0.35));
+}
