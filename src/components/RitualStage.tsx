@@ -2,29 +2,38 @@ import { lazy, Suspense, useEffect, useRef, useState } from "react";
 import { gsap, prefersReducedMotion, isTouch } from "../lib/motion";
 import { SALON, RITUAL_BEATS } from "../lib/content";
 import SplitLetters from "./SplitLetters";
-import BottleFallback from "./three/BottleFallback";
 import "./RitualStage.css";
 
-// The WebGL stage (three.js + postprocessing) is code-split so touch and
-// reduced-motion visitors never download it.
+// Ambient-particle WebGL layer is code-split so touch / reduced-motion
+// visitors never download three.js.
 const Stage3D = lazy(() => import("./three/Stage3D"));
+
+const HERO_IMG = "/images/hero-bottle.jpg";
+const HERO_ALT =
+  "The LUMÉRA signature serum — a frosted-glass bottle with a rose-gold cap, floating in warm light.";
 
 /**
  * Sections 2 + 3 — Hero and The Ritual, sharing one persistent stage.
  *
- * A sticky canvas holds the floating signature bottle; a single scroll
- * progress (0 → 1 across the tall stage) drives everything: the hero fades
- * as the ritual beats crossfade in sequence, the bottle rotates and the
- * camera drifts closer, and the backdrop warms from raw dark toward blush.
+ * The real signature bottle (hero-bottle.jpg) floats at the centre of a sticky
+ * stage, composited over an ambient particle field. A single scroll progress
+ * (0 → 1 across the tall stage) drives everything: the hero fades as the ritual
+ * beats crossfade, the bottle scales/turns as the "camera" drifts closer, and
+ * the backdrop warms from raw dark toward blush.
  *
- * Under reduced motion / touch we drop WebGL and lay the beats out as a
- * calm, static vertical sequence.
+ * The LUMÉRA wordmark sits clearly ABOVE the bottle so it never competes with
+ * the bottle's own engraved label, which is further held low-contrast by a soft
+ * scrim.
+ *
+ * Under reduced motion / touch we drop WebGL and lay everything out calm and
+ * static.
  */
 export default function RitualStage({ started }: { started: boolean }) {
   const stageRef = useRef<HTMLDivElement>(null);
   const stickyRef = useRef<HTMLDivElement>(null);
   const heroRef = useRef<HTMLDivElement>(null);
   const cueRef = useRef<HTMLDivElement>(null);
+  const bottleRef = useRef<HTMLDivElement>(null);
   const beatRefs = useRef<(HTMLDivElement | null)[]>([]);
   const glowRef = useRef<HTMLDivElement>(null);
   const nameRef = useRef<HTMLSpanElement>(null);
@@ -87,6 +96,13 @@ export default function RitualStage({ started }: { started: boolean }) {
       }
       if (cueRef.current) cueRef.current.style.opacity = String(heroP);
 
+      // The bottle "turns" and the camera drifts closer through the ritual.
+      if (bottleRef.current) {
+        const scale = 1 + p * 0.2;
+        const rot = -3 + p * 7;
+        bottleRef.current.style.transform = `translate(-50%, -50%) scale(${scale}) rotate(${rot}deg)`;
+      }
+
       // Beats crossfade sequentially across the remaining scroll.
       const bp = Math.min(1, Math.max(0, (p - 0.15) / 0.82));
       const n = beats.length;
@@ -124,7 +140,9 @@ export default function RitualStage({ started }: { started: boolean }) {
             <SplitLetters text={SALON.name} className="hero__name serif-display" />
             <p className="hero__tagline">{SALON.tagline}</p>
             <h1 className="hero__headline serif-display">{SALON.heroHeadline}</h1>
-            <BottleFallback />
+            <div className="stage-static__bottle">
+              <img src={HERO_IMG} alt={HERO_ALT} />
+            </div>
           </div>
         </section>
         <section id="ritual" className="ritual-static section" aria-label="The Ritual">
@@ -157,27 +175,35 @@ export default function RitualStage({ started }: { started: boolean }) {
       >
         <div ref={stickyRef} className="stage__sticky">
           <div ref={glowRef} className="stage__glow" aria-hidden="true" />
-          <div className="stage__canvas">
-            {use3D ? (
-              <Suspense fallback={<div className="stage__fallback"><BottleFallback /></div>}>
+
+          {/* Ambient particles (WebGL) behind the bottle */}
+          {use3D && (
+            <div className="stage__canvas">
+              <Suspense fallback={null}>
                 <Stage3D progressRef={progressRef} />
               </Suspense>
-            ) : (
-              <div className="stage__fallback">
-                <BottleFallback />
-              </div>
-            )}
+            </div>
+          )}
+
+          {/* The real signature bottle, composited onto the dark stage */}
+          <div ref={bottleRef} className="stage__bottle">
+            <div className="stage__bottle-float">
+              <img src={HERO_IMG} alt={HERO_ALT} className="stage__bottle-img" />
+              <span className="stage__bottle-scrim" aria-hidden="true" />
+            </div>
           </div>
 
-          {/* Hero overlay */}
+          {/* Hero overlay — wordmark sits above the bottle */}
           <div ref={heroRef} className="hero">
-            <span className="eyebrow hero__eyebrow">The Transformation Ritual</span>
-            <SplitLetters
-              ref={nameRef}
-              text={SALON.name}
-              className="hero__name serif-display"
-            />
-            <p className="hero__tagline">{SALON.tagline}</p>
+            <div className="hero__top">
+              <span className="eyebrow hero__eyebrow">The Transformation Ritual</span>
+              <SplitLetters
+                ref={nameRef}
+                text={SALON.name}
+                className="hero__name serif-display"
+              />
+              <p className="hero__tagline">{SALON.tagline}</p>
+            </div>
             <h1 className="hero__headline serif-display">{SALON.heroHeadline}</h1>
           </div>
 

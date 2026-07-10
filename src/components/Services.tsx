@@ -1,5 +1,4 @@
 import { SERVICES } from "../lib/content";
-import PlaceholderImage from "./PlaceholderImage";
 import Reveal from "./Reveal";
 import "./Services.css";
 
@@ -20,12 +19,14 @@ export default function Services() {
           {SERVICES.map((s, i) => (
             <article key={s.name} className={`svc-card svc-card--${s.tone}`}>
               <div className="svc-card__media">
-                <PlaceholderImage
-                  variant="service"
-                  hue={i}
-                  mood="warm"
-                  label={`${s.name} treatment`}
+                <img
                   className="svc-card__img"
+                  src={`/images/service-${i + 1}.jpg`}
+                  alt={`${s.name} — ${s.copy}`}
+                  loading="lazy"
+                  decoding="async"
+                  width={445}
+                  height={660}
                 />
               </div>
               <div className="svc-card__body">

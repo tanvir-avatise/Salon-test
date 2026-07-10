@@ -45,6 +45,18 @@
   position: absolute;
   inset: 0;
 }
+.transform__img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 20%;
+}
+/* the "before" is the same portrait, drained of colour and light */
+.transform__img--before {
+  filter: grayscale(0.82) brightness(0.64) contrast(1.03);
+}
 .transform__before {
   z-index: 2;
 }

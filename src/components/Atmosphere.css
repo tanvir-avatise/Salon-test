@@ -16,6 +16,17 @@
   z-index: -2;
 }
 
+.atmosphere__photo {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 45%;
+  /* dim & warm the room so the breathing orbs and the line read over it */
+  filter: brightness(0.5) saturate(1.08) contrast(1.02);
+}
+
 .atmosphere__orb {
   position: absolute;
   border-radius: 50%;
@@ -66,7 +77,12 @@
   position: absolute;
   inset: 0;
   z-index: -1;
-  background: radial-gradient(circle at 50% 50%, transparent 40%, rgba(16, 12, 14, 0.85));
+  background: radial-gradient(
+    circle at 50% 50%,
+    rgba(16, 12, 14, 0.5) 0%,
+    rgba(16, 12, 14, 0.62) 45%,
+    rgba(16, 12, 14, 0.9) 100%
+  );
 }
 
 .atmosphere__line {

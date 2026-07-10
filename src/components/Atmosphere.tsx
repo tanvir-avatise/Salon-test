@@ -42,10 +42,17 @@ export default function Atmosphere() {
 
   return (
     <section ref={ref} className="atmosphere" aria-label="Atmosphere">
-      <div ref={bgRef} className="atmosphere__bg" aria-hidden="true">
-        <span className="atmosphere__orb atmosphere__orb--1" />
-        <span className="atmosphere__orb atmosphere__orb--2" />
-        <span className="atmosphere__orb atmosphere__orb--3" />
+      <div ref={bgRef} className="atmosphere__bg">
+        <img
+          className="atmosphere__photo"
+          src="/images/atmosphere-salon.jpg"
+          alt="Inside the LUMÉRA atelier at golden hour — a plum velvet chair beside a gilt mirror, sunlight through sheer curtains."
+          loading="lazy"
+          decoding="async"
+        />
+        <span className="atmosphere__orb atmosphere__orb--1" aria-hidden="true" />
+        <span className="atmosphere__orb atmosphere__orb--2" aria-hidden="true" />
+        <span className="atmosphere__orb atmosphere__orb--3" aria-hidden="true" />
       </div>
       <div className="atmosphere__grain" aria-hidden="true" />
       <p className="atmosphere__line serif-display">

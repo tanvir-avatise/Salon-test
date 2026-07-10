@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { prefersReducedMotion } from "../lib/motion";
-import PlaceholderImage from "./PlaceholderImage";
 import Reveal from "./Reveal";
 import "./Transformation.css";
 
@@ -60,16 +59,28 @@ export default function Transformation() {
           >
             {/* AFTER — full, warm & radiant */}
             <div className="transform__layer transform__after">
-              <PlaceholderImage variant="portrait" mood="warm" label="After — radiant" />
+              <img
+                className="transform__img"
+                src="/images/service-1.jpg"
+                alt="After — luminous, dimensional plum and rose-gold colour by LUMÉRA."
+                loading="lazy"
+                decoding="async"
+              />
               <span className="transform__tag transform__tag--after">After</span>
             </div>
 
-            {/* BEFORE — clipped, raw & cool */}
+            {/* BEFORE — clipped: the same hair, raw & undone */}
             <div
               className="transform__layer transform__before"
               style={{ clipPath: `inset(0 ${100 - pos}% 0 0)` }}
             >
-              <PlaceholderImage variant="portrait" mood="raw" label="Before — raw" />
+              <img
+                className="transform__img transform__img--before"
+                src="/images/service-1.jpg"
+                alt="Before — the same hair, dull and undone."
+                loading="lazy"
+                decoding="async"
+              />
               <span className="transform__tag transform__tag--before">Before</span>
             </div>
 

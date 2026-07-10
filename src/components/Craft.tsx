@@ -1,4 +1,3 @@
-import PlaceholderImage from "./PlaceholderImage";
 import Reveal from "./Reveal";
 import "./Craft.css";
 
@@ -12,11 +11,14 @@ export default function Craft() {
     <section id="craft" className="section craft" aria-label="The Craft">
       <div className="section-inner craft__inner">
         <Reveal className="craft__media" y={48}>
-          <PlaceholderImage
-            variant="workspace"
-            mood="warm"
-            label="The atelier — portrait and workspace"
+          <img
             className="craft__img"
+            src="/images/service-3.jpg"
+            alt="A LUMÉRA guest with luminous, hand-painted plum and rose-gold colour."
+            loading="lazy"
+            decoding="async"
+            width={445}
+            height={660}
           />
           <span className="craft__caption">Founder &amp; Creative Director — R. Vasquez</span>
         </Reveal>
