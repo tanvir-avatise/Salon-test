@@ -66,8 +66,8 @@ export default function Footer() {
             ))}
           </ul>
           <p className="footer__fine">
-            © {"2024"} {SALON.name} · Crafted as a flagship concept · Placeholder
-            content
+            © {new Date().getFullYear()} {SALON.name} · Crafted as a flagship
+            concept · Placeholder content
           </p>
         </div>
       </div>

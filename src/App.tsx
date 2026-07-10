@@ -10,6 +10,7 @@ import RitualStage from "./components/RitualStage";
 import Transformation from "./components/Transformation";
 import Services from "./components/Services";
 import Craft from "./components/Craft";
+import Products from "./components/Products";
 import Atmosphere from "./components/Atmosphere";
 import Reviews from "./components/Reviews";
 import Booking from "./components/Booking";
@@ -57,6 +58,7 @@ export default function App() {
         <Transformation />
         <Services />
         <Craft />
+        <Products />
         <Atmosphere />
         <Reviews />
         <Booking />

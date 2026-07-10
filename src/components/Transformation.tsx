@@ -58,27 +58,27 @@ export default function Transformation() {
               setFromClientX(e.clientX);
             }}
           >
-            {/* AFTER — full, warm & radiant */}
+            {/* AFTER — the finished, glossy dimensional result */}
             <div className="transform__layer transform__after">
               <img
                 className="transform__img"
-                src={asset("images/service-1.jpg")}
-                alt="After — luminous, dimensional plum and rose-gold colour by LUMÉRA."
+                src={asset("images/after.jpg")}
+                alt="After — a glossy, dimensional plum and rose-gold result by LUMÉRA."
                 loading="lazy"
                 decoding="async"
               />
               <span className="transform__tag transform__tag--after">After</span>
             </div>
 
-            {/* BEFORE — clipped: the same hair, raw & undone */}
+            {/* BEFORE — clipped: the raw, flat starting look */}
             <div
               className="transform__layer transform__before"
               style={{ clipPath: `inset(0 ${100 - pos}% 0 0)` }}
             >
               <img
-                className="transform__img transform__img--before"
-                src={asset("images/service-1.jpg")}
-                alt="Before — the same hair, dull and undone."
+                className="transform__img"
+                src={asset("images/before.jpg")}
+                alt="Before — flat, dull, undone hair."
                 loading="lazy"
                 decoding="async"
               />

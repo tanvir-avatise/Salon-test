@@ -35,6 +35,7 @@ export default function RitualStage({ started }: { started: boolean }) {
   const heroRef = useRef<HTMLDivElement>(null);
   const cueRef = useRef<HTMLDivElement>(null);
   const bottleRef = useRef<HTMLDivElement>(null);
+  const canvasRef = useRef<HTMLDivElement>(null);
   const beatRefs = useRef<(HTMLDivElement | null)[]>([]);
   const glowRef = useRef<HTMLDivElement>(null);
   const nameRef = useRef<HTMLSpanElement>(null);
@@ -108,13 +109,20 @@ export default function RitualStage({ started }: { started: boolean }) {
       const bp = Math.min(1, Math.max(0, (p - 0.15) / 0.82));
       const n = beats.length;
       const seg = bp * n;
+      let maxBeat = 0;
       beats.forEach((el, i) => {
         if (!el) return;
         const t = seg - i; // 0..1 while this beat is "active"
         const vis = t > 0 && t < 1 ? Math.sin(t * Math.PI) : 0;
+        if (vis > maxBeat) maxBeat = vis;
         el.style.opacity = String(vis);
         el.style.transform = `translateY(${(1 - vis) * 22}px)`;
       });
+
+      // While a beat reads, recede the bottle so the copy stays legible.
+      const bottleDim = String(1 - maxBeat * 0.55);
+      if (bottleRef.current) bottleRef.current.style.opacity = bottleDim;
+      if (canvasRef.current) canvasRef.current.style.opacity = bottleDim;
 
       // Backdrop warms; the glow swells.
       if (stickyRef.current)
@@ -177,22 +185,22 @@ export default function RitualStage({ started }: { started: boolean }) {
         <div ref={stickyRef} className="stage__sticky">
           <div ref={glowRef} className="stage__glow" aria-hidden="true" />
 
-          {/* Ambient particles (WebGL) behind the bottle */}
-          {use3D && (
-            <div className="stage__canvas">
+          {/* Primary: a real-time interactive 3D glass bottle (WebGL).
+              Fallback (touch): the composited photo bottle. */}
+          {use3D ? (
+            <div ref={canvasRef} className="stage__canvas">
               <Suspense fallback={null}>
                 <Stage3D progressRef={progressRef} />
               </Suspense>
             </div>
-          )}
-
-          {/* The real signature bottle, composited onto the dark stage */}
-          <div ref={bottleRef} className="stage__bottle">
-            <div className="stage__bottle-float">
-              <img src={HERO_IMG} alt={HERO_ALT} className="stage__bottle-img" />
-              <span className="stage__bottle-scrim" aria-hidden="true" />
+          ) : (
+            <div ref={bottleRef} className="stage__bottle">
+              <div className="stage__bottle-float">
+                <img src={HERO_IMG} alt={HERO_ALT} className="stage__bottle-img" />
+                <span className="stage__bottle-scrim" aria-hidden="true" />
+              </div>
             </div>
-          </div>
+          )}
 
           {/* Hero overlay — wordmark sits above the bottle */}
           <div ref={heroRef} className="hero">

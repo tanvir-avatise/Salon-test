@@ -1,0 +1,105 @@
+.shelf {
+  background: linear-gradient(180deg, var(--stage-1), var(--stage-2));
+}
+
+.shelf__head {
+  max-width: 34ch;
+  margin-bottom: clamp(2.5rem, 6vw, 4.5rem);
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+.shelf__head .section-title {
+  color: var(--text-on-dark);
+}
+
+.shelf__grid {
+  display: grid;
+  gap: clamp(1.2rem, 2.5vw, 2rem);
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+}
+
+.prod-card {
+  display: flex;
+  flex-direction: column;
+  border-radius: 8px;
+  overflow: hidden;
+  background: rgba(242, 235, 230, 0.03);
+  border: 1px solid var(--hairline-dark);
+  transition: transform 0.6s var(--ease-indulgent), box-shadow 0.6s var(--ease-indulgent),
+    border-color 0.6s var(--ease-soft);
+}
+.prod-card:hover {
+  transform: translateY(-6px);
+  border-color: rgba(201, 154, 138, 0.4);
+  box-shadow: 0 30px 70px -34px rgba(0, 0, 0, 0.7);
+}
+
+.prod-card__media {
+  position: relative;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  /* themed placeholder shown until product-N.jpg lands (or if it 404s) */
+  background: radial-gradient(
+      ellipse 70% 55% at 50% 42%,
+      rgba(201, 154, 138, 0.28),
+      transparent 70%
+    ),
+    linear-gradient(180deg, #2a2024, #171215);
+}
+.prod-card__media::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  box-shadow: inset 0 -60px 60px -40px rgba(0, 0, 0, 0.6);
+}
+
+.prod-card__img {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 45%;
+  transition: transform 1.2s var(--ease-indulgent);
+}
+.prod-card:hover .prod-card__img {
+  transform: scale(1.05);
+}
+
+.prod-card__body {
+  padding: 1.3rem 1.4rem 1.6rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  border-top: 2px solid transparent;
+}
+.prod-card--rose .prod-card__body { border-color: var(--rose-gold); }
+.prod-card--emerald .prod-card__body { border-color: var(--emerald); }
+.prod-card--ink .prod-card__body { border-color: var(--ink-soft); }
+
+.prod-card__row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+}
+.prod-card__name {
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: clamp(1.1rem, 1.7vw, 1.4rem);
+  color: var(--text-on-dark);
+}
+.prod-card__price {
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--rose-gold);
+  white-space: nowrap;
+}
+.prod-card__copy {
+  font-size: 0.92rem;
+  line-height: 1.5;
+  color: var(--text-on-dark-dim);
+}

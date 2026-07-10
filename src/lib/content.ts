@@ -69,6 +69,33 @@ export const SERVICES: {
   },
 ];
 
+/* The Shelf — take-home retail products */
+export const PRODUCTS: {
+  name: string;
+  copy: string;
+  from: string;
+  tone: "rose" | "emerald" | "ink";
+}[] = [
+  {
+    name: "Gloss Drops Serum",
+    copy: "A weightless finishing serum for mirror shine and slip.",
+    from: "£38",
+    tone: "rose",
+  },
+  {
+    name: "Bond Repair Masque",
+    copy: "Weekly restoration that rebuilds colour-treated hair.",
+    from: "£46",
+    tone: "emerald",
+  },
+  {
+    name: "Scalp Ritual Oil",
+    copy: "A pre-wash ceremony that softens, calms and grounds.",
+    from: "£34",
+    tone: "ink",
+  },
+];
+
 /* Section 8 — Reviews / social proof */
 export const REVIEWS: { quote: string; author: string }[] = [
   { quote: "I have never felt so at ease in a chair. I left lighter than I arrived.", author: "Amara R." },

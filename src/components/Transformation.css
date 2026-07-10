@@ -53,16 +53,11 @@
   object-fit: cover;
   object-position: 50% 20%;
 }
-/* the "before" is the same portrait, drained of colour and light */
-.transform__img--before {
-  filter: grayscale(0.82) brightness(0.64) contrast(1.03);
-}
 .transform__before {
   z-index: 2;
 }
 .transform__after {
   z-index: 1;
-  filter: saturate(1.05);
 }
 
 .transform__tag {
