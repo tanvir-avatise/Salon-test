@@ -1,6 +1,7 @@
 import { lazy, Suspense, useEffect, useRef, useState } from "react";
 import { gsap, prefersReducedMotion, isTouch } from "../lib/motion";
 import { SALON, RITUAL_BEATS } from "../lib/content";
+import { asset } from "../lib/asset";
 import SplitLetters from "./SplitLetters";
 import "./RitualStage.css";
 
@@ -8,7 +9,7 @@ import "./RitualStage.css";
 // visitors never download three.js.
 const Stage3D = lazy(() => import("./three/Stage3D"));
 
-const HERO_IMG = "/images/hero-bottle.jpg";
+const HERO_IMG = asset("images/hero-bottle.jpg");
 const HERO_ALT =
   "The LUMÉRA signature serum — a frosted-glass bottle with a rose-gold cap, floating in warm light.";
 

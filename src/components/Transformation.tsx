@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { prefersReducedMotion } from "../lib/motion";
+import { asset } from "../lib/asset";
 import Reveal from "./Reveal";
 import "./Transformation.css";
 
@@ -61,7 +62,7 @@ export default function Transformation() {
             <div className="transform__layer transform__after">
               <img
                 className="transform__img"
-                src="/images/service-1.jpg"
+                src={asset("images/service-1.jpg")}
                 alt="After — luminous, dimensional plum and rose-gold colour by LUMÉRA."
                 loading="lazy"
                 decoding="async"
@@ -76,7 +77,7 @@ export default function Transformation() {
             >
               <img
                 className="transform__img transform__img--before"
-                src="/images/service-1.jpg"
+                src={asset("images/service-1.jpg")}
                 alt="Before — the same hair, dull and undone."
                 loading="lazy"
                 decoding="async"

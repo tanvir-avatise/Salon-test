@@ -1,3 +1,4 @@
+import { asset } from "../lib/asset";
 import Reveal from "./Reveal";
 import "./Craft.css";
 
@@ -13,7 +14,7 @@ export default function Craft() {
         <Reveal className="craft__media" y={48}>
           <img
             className="craft__img"
-            src="/images/service-3.jpg"
+            src={asset("images/service-3.jpg")}
             alt="A LUMÉRA guest with luminous, hand-painted plum and rose-gold colour."
             loading="lazy"
             decoding="async"

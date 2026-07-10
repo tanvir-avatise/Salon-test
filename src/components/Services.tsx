@@ -1,4 +1,5 @@
 import { SERVICES } from "../lib/content";
+import { asset } from "../lib/asset";
 import Reveal from "./Reveal";
 import "./Services.css";
 
@@ -21,7 +22,7 @@ export default function Services() {
               <div className="svc-card__media">
                 <img
                   className="svc-card__img"
-                  src={`/images/service-${i + 1}.jpg`}
+                  src={asset(`images/service-${i + 1}.jpg`)}
                   alt={`${s.name} — ${s.copy}`}
                   loading="lazy"
                   decoding="async"

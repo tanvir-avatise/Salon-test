@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
 import { gsap, ScrollTrigger, prefersReducedMotion } from "../lib/motion";
+import { asset } from "../lib/asset";
 import "./Atmosphere.css";
 
 /**
@@ -45,7 +46,7 @@ export default function Atmosphere() {
       <div ref={bgRef} className="atmosphere__bg">
         <img
           className="atmosphere__photo"
-          src="/images/atmosphere-salon.jpg"
+          src={asset("images/atmosphere-salon.jpg")}
           alt="Inside the LUMÉRA atelier at golden hour — a plum velvet chair beside a gilt mirror, sunlight through sheer curtains."
           loading="lazy"
           decoding="async"
