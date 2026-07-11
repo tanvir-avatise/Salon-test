@@ -1,27 +1,41 @@
-import { useEffect, useRef, useState } from "react";
+import { Suspense, lazy, useEffect, useRef, useState } from "react";
 import { prefersReducedMotion } from "../lib/motion";
 import { asset } from "../lib/asset";
 import "./MotionMoment.css";
 
+const MotionCanvas = lazy(() => import("./three/MotionCanvas"));
 const HAIR = asset("images/hero-hair.jpg");
 
 /**
- * A cinematic "in motion" interstitial — a scroll-scrubbed moment that plays
- * like a few seconds of glossy hair B-roll without shipping a video file. A
- * tall sticky section turns scroll into a playhead (0 → 1): the framing slowly
- * pushes in and pans, a band of light sweeps across the strands, and a single
- * line resolves into place. Pure transforms + opacity, so it stays smooth.
+ * "In motion" — the cinematic breath between the transformation reveal and the
+ * services. A tall sticky section turns scroll into a playhead (0 → 1) that
+ * drives a live WebGL treatment of the hair (a slow push-in, a flowing
+ * shimmer, and bands of light travelling down the strands — see MotionCanvas),
+ * while two Cormorant lines resolve in turn. The canvas only mounts while the
+ * section is near the viewport, so it costs nothing elsewhere.
  *
  * Under reduced motion it settles to a calm, static frame.
  */
 export default function MotionMoment() {
   const sectionRef = useRef<HTMLElement>(null);
-  const mediaRef = useRef<HTMLDivElement>(null);
-  const sheenRef = useRef<HTMLSpanElement>(null);
   const beat1Ref = useRef<HTMLDivElement>(null);
   const beat2Ref = useRef<HTMLDivElement>(null);
   const barRef = useRef<HTMLSpanElement>(null);
+  const progressRef = useRef(0);
   const [reduced] = useState(() => prefersReducedMotion());
+  const [inView, setInView] = useState(false);
+
+  // Mount the WebGL only while the section is near the viewport.
+  useEffect(() => {
+    if (reduced) return;
+    const section = sectionRef.current!;
+    const io = new IntersectionObserver(
+      ([e]) => setInView(e.isIntersecting),
+      { rootMargin: "40% 0px 40% 0px" }
+    );
+    io.observe(section);
+    return () => io.disconnect();
+  }, [reduced]);
 
   useEffect(() => {
     if (reduced) return;
@@ -32,20 +46,8 @@ export default function MotionMoment() {
       const rect = section.getBoundingClientRect();
       const total = rect.height - window.innerHeight;
       const p = Math.min(1, Math.max(0, -rect.top / Math.max(1, total)));
+      progressRef.current = p;
 
-      // slow push-in + pan — the "camera" drifting over the hair
-      if (mediaRef.current) {
-        const scale = 1.18 - p * 0.16;
-        const shiftY = (p - 0.5) * 10; // %
-        const bright = 0.62 + Math.sin(p * Math.PI) * 0.24;
-        mediaRef.current.style.transform = `scale(${scale}) translate3d(0, ${shiftY}%, 0)`;
-        mediaRef.current.style.filter = `brightness(${bright}) saturate(1.08)`;
-      }
-      // a band of light travelling across the strands
-      if (sheenRef.current) {
-        sheenRef.current.style.transform = `translateX(${-70 + p * 240}%) rotate(18deg)`;
-        sheenRef.current.style.opacity = String(Math.sin(p * Math.PI) * 0.7);
-      }
       // two staged lines: the first resolves in and hands off to the second
       const stage = (el: HTMLDivElement | null, inA: number, inB: number, outA: number, outB: number) => {
         if (!el) return;
@@ -88,10 +90,13 @@ export default function MotionMoment() {
   return (
     <section ref={sectionRef} className="mm" aria-label="In motion">
       <div className="mm-sticky">
-        <div ref={mediaRef} className="mm-media">
-          <img src={HAIR} alt="" onError={hide} />
+        <div className="mm-canvas">
+          {inView && (
+            <Suspense fallback={null}>
+              <MotionCanvas progressRef={progressRef} />
+            </Suspense>
+          )}
         </div>
-        <span ref={sheenRef} className="mm-sheen" aria-hidden="true" />
         <span className="mm-vignette" aria-hidden="true" />
         <div className="mm-copy">
           <div ref={beat1Ref} className="mm-beat">

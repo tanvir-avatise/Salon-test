@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import type Lenis from "lenis";
+import Snap from "lenis/snap";
 import { useSmoothScroll } from "./hooks/useSmoothScroll";
 import { ScrollTrigger } from "./lib/motion";
 import Preloader from "./components/Preloader";
@@ -38,6 +39,44 @@ export default function App() {
     const t = setTimeout(() => ScrollTrigger.refresh(), 400);
     return () => clearTimeout(t);
   }, [started]);
+
+  // Snap to the START of each major section so a free scroll always lands at a
+  // section's beginning — never mid-scrub. Proximity + a small threshold means
+  // it only engages near a boundary, so scrubbing WITHIN the long pinned hero
+  // and Journey stays smooth and untrapped.
+  useEffect(() => {
+    if (!lenis || !started) return;
+    const snap = new Snap(lenis, {
+      type: "proximity",
+      distanceThreshold: "16%",
+      duration: 0.8,
+      easing: (t: number) => 1 - Math.pow(1 - t, 3),
+    });
+    const selectors = [
+      "#ritual",
+      "#journey",
+      ".transform",
+      ".mm",
+      "#services",
+      "#craft",
+      "#shelf",
+      ".reviews",
+      "#booking",
+      "#footer",
+    ];
+    const removers: Array<() => void> = [];
+    selectors.forEach((sel) => {
+      const el = document.querySelector<HTMLElement>(sel);
+      if (el) removers.push(snap.addElement(el, { align: ["start"], ignoreSticky: true }));
+    });
+    // recompute once fonts/images/pin layout settle
+    const t = setTimeout(() => snap.resize(), 700);
+    return () => {
+      clearTimeout(t);
+      removers.forEach((r) => r());
+      snap.destroy();
+    };
+  }, [lenis, started]);
 
   // Keep native scroll pinned to top while the preloader is up (reduced-motion path).
   useEffect(() => {

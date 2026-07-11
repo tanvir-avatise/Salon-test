@@ -46,11 +46,12 @@ export default function HairStage({
       <Suspense fallback={null}>
         <Rig />
 
-        {/* warm key + rose rim to sculpt the strands */}
-        <ambientLight intensity={0.5} color="#f0e4da" />
-        <directionalLight position={[3, 4, 5]} intensity={1.3} color="#fff4ec" />
-        <spotLight position={[-4, 2, 2]} angle={0.7} penumbra={1} intensity={45} distance={22} color="#e0b39f" />
-        <pointLight position={[2.5, -2, 3]} intensity={10} color="#c99a8a" distance={14} />
+        {/* soft warm key + rose rim to sculpt the strands (kept gentle so the
+            matte hair never reads as glossy tube) */}
+        <ambientLight intensity={0.55} color="#f0e4da" />
+        <directionalLight position={[3, 4, 5]} intensity={0.85} color="#fff4ec" />
+        <spotLight position={[-4, 2, 2]} angle={0.7} penumbra={1} intensity={28} distance={22} color="#e0b39f" />
+        <pointLight position={[2.5, -2, 3]} intensity={7} color="#c99a8a" distance={14} />
 
         <Float speed={reducedMotion ? 0 : 0.8} rotationIntensity={0} floatIntensity={reducedMotion ? 0 : 0.3} floatingRange={[-0.06, 0.08]}>
           <HairRibbons progressRef={progressRef} velocityRef={velocityRef} reducedMotion={reducedMotion} />
@@ -69,7 +70,7 @@ export default function HairStage({
         </Environment>
 
         <EffectComposer multisampling={0}>
-          <Bloom intensity={0.85} luminanceThreshold={0.55} luminanceSmoothing={0.4} mipmapBlur radius={0.78} />
+          <Bloom intensity={0.55} luminanceThreshold={0.66} luminanceSmoothing={0.4} mipmapBlur radius={0.7} />
           <Vignette eskil={false} offset={0.22} darkness={0.72} />
         </EffectComposer>
       </Suspense>
