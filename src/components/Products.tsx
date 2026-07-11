@@ -1,7 +1,22 @@
 import { PRODUCTS } from "../lib/content";
 import { asset } from "../lib/asset";
+import { isTouch, prefersReducedMotion } from "../lib/motion";
 import Reveal from "./Reveal";
 import "./Products.css";
+
+const tiltEnabled = () => !isTouch() && !prefersReducedMotion();
+
+function onTilt(e: React.MouseEvent<HTMLElement>) {
+  if (!tiltEnabled()) return;
+  const el = e.currentTarget;
+  const r = el.getBoundingClientRect();
+  const px = (e.clientX - r.left) / r.width - 0.5;
+  const py = (e.clientY - r.top) / r.height - 0.5;
+  el.style.transform = `perspective(900px) rotateX(${-py * 6}deg) rotateY(${px * 9}deg) translateY(-6px)`;
+}
+function onLeave(e: React.MouseEvent<HTMLElement>) {
+  e.currentTarget.style.transform = "";
+}
 
 /**
  * The Shelf — a small retail moment. Three take-home products (serum + care),
@@ -24,7 +39,12 @@ export default function Products() {
 
         <Reveal className="shelf__grid" stagger y={40}>
           {PRODUCTS.map((prod, i) => (
-            <article key={prod.name} className={`prod-card prod-card--${prod.tone}`}>
+            <article
+              key={prod.name}
+              className={`prod-card prod-card--${prod.tone}`}
+              onMouseMove={onTilt}
+              onMouseLeave={onLeave}
+            >
               <div className="prod-card__media">
                 <img
                   className="prod-card__img"

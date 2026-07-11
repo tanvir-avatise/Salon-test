@@ -61,13 +61,17 @@ export default function Stage3D({
 
         <Particles count={particleCount} />
 
-        {/* In-scene studio environment — light shapes for real reflections,
-            baked once, no network HDRI fetch. */}
-        <Environment resolution={256} frames={1}>
-          <Lightformer intensity={2.4} color="#fff0e6" position={[0, 3, 2]} scale={[7, 3, 1]} />
-          <Lightformer intensity={1.5} color="#c99a8a" position={[-4, 0, -3]} scale={[3, 7, 1]} />
-          <Lightformer intensity={1.1} color="#4a6b5c" position={[4, -1, -2]} scale={[3, 4, 1]} />
-          <Lightformer intensity={1.7} color="#efe6df" position={[0, -3, 3]} scale={[7, 2, 1]} />
+        {/* In-scene studio environment — richer light shapes for real
+            reflections + caustic-style highlights, baked once, no network. */}
+        <Environment resolution={512} frames={1}>
+          <Lightformer intensity={2.6} color="#fff0e6" position={[0, 3, 2]} scale={[8, 3, 1]} />
+          <Lightformer intensity={1.6} color="#c99a8a" position={[-4, 0.5, -3]} scale={[3, 8, 1]} />
+          <Lightformer intensity={1.2} color="#4a6b5c" position={[4, -1, -2]} scale={[3, 4, 1]} />
+          <Lightformer intensity={1.8} color="#efe6df" position={[0, -3, 3]} scale={[8, 2, 1]} />
+          {/* bright vertical streaks the glass edges catch as it turns */}
+          <Lightformer form="ring" intensity={2.2} color="#ffe9d8" position={[2.5, 2, 3]} scale={[2, 2, 1]} />
+          <Lightformer intensity={2} color="#ffffff" position={[-2, 3, 2]} rotation={[0, 0, 0.6]} scale={[0.4, 5, 1]} />
+          <Lightformer intensity={1.4} color="#e8c3b2" position={[3, -2, 1]} rotation={[0, 0, -0.5]} scale={[0.3, 4, 1]} />
         </Environment>
 
         <EffectComposer multisampling={0}>

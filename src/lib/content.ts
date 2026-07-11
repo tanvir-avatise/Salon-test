@@ -69,6 +69,20 @@ export const SERVICES: {
   },
 ];
 
+/* The Ritual Journey — 5 scroll-scrubbed service steps */
+export const JOURNEY: {
+  img: string;
+  index: string;
+  title: string;
+  line: string;
+}[] = [
+  { img: "journey-1.jpg", index: "01", title: "Arrive", line: "Settle in. The ritual begins." },
+  { img: "journey-2.jpg", index: "02", title: "Cleanse", line: "A warm cleanse at the basin." },
+  { img: "journey-3.jpg", index: "03", title: "Treat", line: "Bespoke treatment, worked through." },
+  { img: "journey-4.jpg", index: "04", title: "Shape", line: "Colour and shape come to life." },
+  { img: "journey-5.jpg", index: "05", title: "Reveal", line: "You, transformed." },
+];
+
 /* The Shelf — take-home retail products */
 export const PRODUCTS: {
   name: string;

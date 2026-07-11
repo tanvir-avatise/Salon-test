@@ -72,7 +72,7 @@
 }
 .craft__stats strong {
   font-family: var(--serif);
-  font-weight: 300;
+  font-weight: 500;
   font-size: clamp(1.6rem, 3vw, 2.4rem);
   color: var(--rose-gold);
 }

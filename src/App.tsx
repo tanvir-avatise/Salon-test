@@ -7,6 +7,7 @@ import Grain from "./components/Grain";
 import Cursor from "./components/Cursor";
 import Nav from "./components/Nav";
 import RitualStage from "./components/RitualStage";
+import RitualJourney from "./components/RitualJourney";
 import Transformation from "./components/Transformation";
 import Services from "./components/Services";
 import Craft from "./components/Craft";
@@ -55,6 +56,7 @@ export default function App() {
 
       <main>
         <RitualStage started={started} />
+        <RitualJourney />
         <Transformation />
         <Services />
         <Craft />

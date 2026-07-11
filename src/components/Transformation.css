@@ -22,7 +22,7 @@
 .transform__line {
   font-size: clamp(2rem, 5vw, 4rem);
   font-style: italic;
-  font-weight: 300;
+  font-weight: 500;
   line-height: 1.05;
   color: var(--text-on-dark);
 }

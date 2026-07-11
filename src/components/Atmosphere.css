@@ -87,7 +87,7 @@
 
 .atmosphere__line {
   font-size: clamp(2rem, 6vw, 5rem);
-  font-weight: 300;
+  font-weight: 500;
   font-style: italic;
   color: var(--text-on-dark);
   line-height: 1.1;

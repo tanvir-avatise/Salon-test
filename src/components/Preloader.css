@@ -23,8 +23,9 @@
 }
 
 .preloader__name {
-  font-size: clamp(3.2rem, 13vw, 9rem);
-  letter-spacing: 0.02em;
+  font-size: clamp(3rem, 12vw, 8.5rem);
+  letter-spacing: 0.03em;
+  white-space: nowrap; /* keep the intro wordmark on one line at every width */
   overflow: hidden;
   color: var(--ink);
 }

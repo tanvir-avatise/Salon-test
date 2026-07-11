@@ -108,9 +108,10 @@
 }
 
 .hero__name {
-  font-size: clamp(2.8rem, 9vw, 7rem);
-  letter-spacing: 0.02em;
-  line-height: 0.92;
+  font-size: clamp(2.8rem, 8.5vw, 7rem);
+  letter-spacing: 0.03em;
+  line-height: 0.95;
+  white-space: nowrap; /* the wordmark must never wrap */
   color: var(--text-on-dark);
   overflow: hidden;
   text-shadow: 0 0 60px rgba(23, 18, 21, 0.5);
@@ -128,7 +129,7 @@
 
 .hero__headline {
   font-size: clamp(1.4rem, 3.4vw, 2.6rem);
-  font-weight: 300;
+  font-weight: 500;
   font-style: italic;
   color: var(--text-on-dark);
   text-shadow: 0 2px 30px rgba(16, 11, 12, 0.7);
@@ -197,7 +198,7 @@
 }
 .beat__line {
   font-size: clamp(1.5rem, 3.6vw, 3rem);
-  font-weight: 300;
+  font-weight: 500;
   line-height: 1.2;
   color: var(--text-on-dark);
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5), 0 0 40px rgba(11, 7, 8, 0.9);
@@ -279,7 +280,7 @@
   max-width: 46ch;
   font-family: var(--serif);
   font-size: clamp(1.3rem, 3vw, 2rem);
-  font-weight: 300;
+  font-weight: 500;
   color: var(--text-on-dark);
 }
 .ritual-static__index {

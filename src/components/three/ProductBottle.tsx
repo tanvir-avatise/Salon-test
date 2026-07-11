@@ -66,20 +66,23 @@ export default function ProductBottle({
       <mesh castShadow>
         <latheGeometry args={[bodyPoints, 128]} />
         <MeshTransmissionMaterial
-          samples={5}
-          resolution={256}
+          samples={7}
+          resolution={512}
           transmission={1}
-          roughness={0.28}
-          thickness={0.9}
-          ior={1.44}
-          chromaticAberration={0.035}
-          anisotropy={0.25}
-          distortion={0.12}
-          distortionScale={0.2}
-          temporalDistortion={0.06}
+          roughness={0.24}
+          thickness={1.0}
+          ior={1.45}
+          chromaticAberration={0.045}
+          anisotropy={0.3}
+          anisotropicBlur={0.06}
+          distortion={0.32}
+          distortionScale={0.4}
+          temporalDistortion={0.14}
           clearcoat={1}
-          clearcoatRoughness={0.28}
-          attenuationDistance={2.6}
+          clearcoatRoughness={0.22}
+          backside
+          backsideThickness={0.5}
+          attenuationDistance={2.8}
           attenuationColor={"#f0d4c4"}
           color={"#f8f0ea"}
           background={new THREE.Color("#c7a48f")}
