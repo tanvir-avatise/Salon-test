@@ -45,6 +45,73 @@ function useBentFrame(w: number, h: number, bend: number) {
   }, [w, h, bend]);
 }
 
+/** A swept tube with variable radius (tapers to fine points at both ends) plus
+ *  an `aT` attribute carrying the along-curve parameter so the material can
+ *  dissolve the extremities. */
+function taperedTubeGeometry(
+  curve: THREE.CatmullRomCurve3,
+  tubular: number,
+  radial: number,
+  radiusAt: (t: number) => number
+) {
+  const frames = curve.computeFrenetFrames(tubular, false);
+  const pos: number[] = [];
+  const nor: number[] = [];
+  const uv: number[] = [];
+  const at: number[] = [];
+  const P = new THREE.Vector3();
+  const nrm = new THREE.Vector3();
+  for (let i = 0; i <= tubular; i++) {
+    const t = i / tubular;
+    curve.getPointAt(t, P);
+    const N = frames.normals[i];
+    const B = frames.binormals[i];
+    const r = radiusAt(t);
+    for (let j = 0; j <= radial; j++) {
+      const v = (j / radial) * Math.PI * 2;
+      const sin = Math.sin(v);
+      const cos = -Math.cos(v);
+      nrm.set(cos * N.x + sin * B.x, cos * N.y + sin * B.y, cos * N.z + sin * B.z).normalize();
+      pos.push(P.x + r * nrm.x, P.y + r * nrm.y, P.z + r * nrm.z);
+      nor.push(nrm.x, nrm.y, nrm.z);
+      uv.push(t, j / radial);
+      at.push(t);
+    }
+  }
+  const idx: number[] = [];
+  for (let i = 1; i <= tubular; i++) {
+    for (let j = 1; j <= radial; j++) {
+      const a = (radial + 1) * (i - 1) + (j - 1);
+      const b = (radial + 1) * i + (j - 1);
+      const c = (radial + 1) * i + j;
+      const d = (radial + 1) * (i - 1) + j;
+      idx.push(a, b, d, b, c, d);
+    }
+  }
+  const g = new THREE.BufferGeometry();
+  g.setIndex(idx);
+  g.setAttribute("position", new THREE.Float32BufferAttribute(pos, 3));
+  g.setAttribute("normal", new THREE.Float32BufferAttribute(nor, 3));
+  g.setAttribute("uv", new THREE.Float32BufferAttribute(uv, 2));
+  g.setAttribute("aT", new THREE.Float32BufferAttribute(at, 1));
+  return g;
+}
+
+/** Dissolve the spine's two extremities: alpha ramps 0→1 over the first 10% of
+ *  the curve and 1→0 over the last 10%, so it enters from a soft point and
+ *  fades to nothing rather than starting/ending with a hard cap. */
+const spineEndFade = (shader: THREE.WebGLProgramParametersWithUniforms) => {
+  shader.vertexShader = shader.vertexShader
+    .replace("#include <common>", "#include <common>\nattribute float aT;\nvarying float vT;")
+    .replace("#include <begin_vertex>", "#include <begin_vertex>\nvT = aT;");
+  shader.fragmentShader = shader.fragmentShader
+    .replace("#include <common>", "#include <common>\nvarying float vT;")
+    .replace(
+      "#include <dithering_fragment>",
+      "#include <dithering_fragment>\ngl_FragColor.a *= smoothstep(0.0, 0.10, vT) * (1.0 - smoothstep(0.90, 1.0, vT));"
+    );
+};
+
 function Scene({ progressRef }: { progressRef: React.MutableRefObject<number> }) {
   const { camera, size } = useThree();
   // Narrow / portrait screens: centre the panels and drop their captions
@@ -79,7 +146,8 @@ function Scene({ progressRef }: { progressRef: React.MutableRefObject<number> })
   const meshRefs = useRef<(THREE.Mesh | null)[]>([]);
   const capRefs = useRef<(HTMLDivElement | null)[]>([]);
 
-  // Helical "luminous strand" for the spine.
+  // Helical "luminous strand" for the spine — tapered to fine points at both
+  // ends so it never shows a blunt cap.
   const spineGeo = useMemo(() => {
     const pts: THREE.Vector3[] = [];
     const H = N * Y_GAP + 3;
@@ -88,7 +156,13 @@ function Scene({ progressRef }: { progressRef: React.MutableRefObject<number> })
       pts.push(new THREE.Vector3(Math.sin(a) * 0.16, H / 2 - t * H, Math.cos(a) * 0.16));
     }
     const curve = new THREE.CatmullRomCurve3(pts);
-    return new THREE.TubeGeometry(curve, 240, 0.05, 16, false);
+    const baseR = 0.055;
+    const radiusAt = (t: number) => {
+      const taper =
+        THREE.MathUtils.smoothstep(t, 0, 0.08) * (1 - THREE.MathUtils.smoothstep(t, 0.92, 1));
+      return baseR * Math.max(0.02, taper);
+    };
+    return taperedTubeGeometry(curve, 260, 14, radiusAt);
   }, []);
 
   const easeSmooth = (x: number) => x * x * (3 - 2 * x);
@@ -146,13 +220,8 @@ function Scene({ progressRef }: { progressRef: React.MutableRefObject<number> })
         <mesh geometry={spineGeo}>
           <meshPhysicalMaterial
             color="#5a3b44"
-            metalness={0.2}
-            roughness={0.07}
-            transmission={0.6}
-            thickness={0.7}
-            ior={1.46}
-            attenuationColor={new THREE.Color("#c99a8a")}
-            attenuationDistance={1.4}
+            metalness={0.5}
+            roughness={0.1}
             iridescence={1}
             iridescenceIOR={1.4}
             iridescenceThicknessRange={[200, 900]}
@@ -160,8 +229,10 @@ function Scene({ progressRef }: { progressRef: React.MutableRefObject<number> })
             clearcoatRoughness={0.06}
             specularIntensity={1}
             emissive={new THREE.Color("#c99a8a")}
-            emissiveIntensity={0.32}
+            emissiveIntensity={0.4}
             envMapIntensity={1.9}
+            transparent
+            onBeforeCompile={spineEndFade}
           />
         </mesh>
         <mesh ref={orbRef}>

@@ -10,7 +10,6 @@ import Nav from "./components/Nav";
 import RitualStage from "./components/RitualStage";
 import RitualJourney from "./components/RitualJourney";
 import Transformation from "./components/Transformation";
-import MotionMoment from "./components/MotionMoment";
 import Services from "./components/Services";
 import Craft from "./components/Craft";
 import Products from "./components/Products";
@@ -56,7 +55,6 @@ export default function App() {
       "#ritual",
       "#journey",
       ".transform",
-      ".mm",
       "#services",
       "#craft",
       "#shelf",
@@ -102,7 +100,6 @@ export default function App() {
           <RitualJourney />
         </div>
         <Transformation />
-        <MotionMoment />
         <Services />
         <Craft />
         <Products />
