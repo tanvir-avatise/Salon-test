@@ -1,0 +1,126 @@
+/* ============ "In motion" cinematic interstitial ============ */
+.mm {
+  position: relative;
+  width: 100%;
+  height: 240vh; /* scroll runway for the scrubbed playhead */
+  background: #0f0b0d;
+}
+
+.mm-sticky {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  height: 100svh;
+  overflow: hidden;
+  background: #0f0b0d;
+}
+
+.mm-media {
+  position: absolute;
+  inset: -6%;
+  will-change: transform, filter;
+  transform: scale(1.18);
+}
+.mm-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 55% 38%;
+}
+
+/* travelling band of light across the strands */
+.mm-sheen {
+  position: absolute;
+  top: -30%;
+  left: 0;
+  width: 42%;
+  height: 160%;
+  pointer-events: none;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 240, 228, 0.06) 30%,
+    rgba(255, 236, 214, 0.42) 50%,
+    rgba(255, 240, 228, 0.06) 70%,
+    transparent
+  );
+  mix-blend-mode: screen;
+  filter: blur(6px);
+  opacity: 0;
+  will-change: transform, opacity;
+}
+
+/* cinematic edges */
+.mm-vignette {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(130% 90% at 50% 45%, transparent 52%, rgba(9, 6, 7, 0.72) 100%),
+    linear-gradient(180deg, rgba(9, 6, 7, 0.5), transparent 22%, transparent 72%, rgba(9, 6, 7, 0.72));
+}
+
+.mm-copy {
+  position: absolute;
+  left: 50%;
+  bottom: clamp(4rem, 16vh, 9rem);
+  transform: translateX(-50%);
+  width: min(90vw, 40ch);
+  text-align: center;
+  z-index: 2;
+  pointer-events: none;
+  will-change: opacity, transform;
+}
+.mm-kicker {
+  display: block;
+  font-family: var(--sans);
+  font-size: 0.68rem;
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+  color: var(--rose-gold);
+  margin-bottom: 1.1rem;
+}
+.mm-line {
+  font-size: clamp(1.9rem, 5vw, 4rem);
+  font-weight: 500;
+  line-height: 1.08;
+  color: var(--text-on-dark);
+  text-shadow: 0 2px 40px rgba(9, 6, 7, 0.8);
+}
+
+.mm-progress {
+  position: absolute;
+  left: var(--gutter);
+  right: var(--gutter);
+  bottom: clamp(1.4rem, 4vh, 2.4rem);
+  height: 1px;
+  background: rgba(242, 235, 230, 0.14);
+  z-index: 3;
+}
+.mm-progress span {
+  display: block;
+  height: 100%;
+  transform-origin: left;
+  transform: scaleX(0);
+  background: linear-gradient(90deg, var(--rose-gold-lo), var(--rose-gold));
+}
+
+/* ============ reduced-motion static frame ============ */
+.mm--static {
+  position: relative;
+  height: 80vh;
+  min-height: 520px;
+  overflow: hidden;
+  display: block;
+}
+.mm-media--static {
+  position: absolute;
+  inset: 0;
+  transform: none;
+}
+.mm-media--static img {
+  filter: brightness(0.6) saturate(1.05);
+}
+.mm--static .mm-copy {
+  bottom: clamp(3rem, 12vh, 6rem);
+}

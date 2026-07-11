@@ -5,29 +5,28 @@ import { asset } from "../lib/asset";
 import SplitLetters from "./SplitLetters";
 import "./RitualStage.css";
 
-// Ambient-particle WebGL layer is code-split so touch / reduced-motion
-// visitors never download three.js.
-const Stage3D = lazy(() => import("./three/Stage3D"));
+// The WebGL hero form is code-split so touch / reduced-motion visitors never
+// download three.js.
+const HairStage = lazy(() => import("./three/HairStage"));
 
-const HERO_IMG = asset("images/hero-bottle.jpg");
+const HERO_IMG = asset("images/hero-hair.jpg");
 const HERO_ALT =
-  "The LUMÉRA signature serum — a frosted-glass bottle with a rose-gold cap, floating in warm light.";
+  "A sculptural fall of glossy hair catching warm rose-gold light — the LUMÉRA transformation.";
 
 /**
  * Sections 2 + 3 — Hero and The Ritual, sharing one persistent stage.
  *
- * The real signature bottle (hero-bottle.jpg) floats at the centre of a sticky
- * stage, composited over an ambient particle field. A single scroll progress
- * (0 → 1 across the tall stage) drives everything: the hero fades as the ritual
- * beats crossfade, the bottle scales/turns as the "camera" drifts closer, and
+ * A sculptural, abstract "flowing hair / silk-of-light" form (procedural R3F
+ * strands, see HairStage/HairRibbons) turns and undulates at the centre of a
+ * sticky stage, over an ambient particle field and a soft, heavily-blurred
+ * hair backdrop. A single scroll progress (0 → 1 across the tall stage) drives
+ * everything: the hero fades as the ritual beats crossfade, the form drifts
+ * back in gentle parallax (it settles and recedes — never zooms to fill), and
  * the backdrop warms from raw dark toward blush.
  *
- * The LUMÉRA wordmark sits clearly ABOVE the bottle so it never competes with
- * the bottle's own engraved label, which is further held low-contrast by a soft
- * scrim.
+ * The LUMÉRA wordmark sits clearly ABOVE the form so the two never compete.
  *
- * Under reduced motion / touch we drop WebGL and lay everything out calm and
- * static.
+ * Under reduced motion / touch we drop WebGL and show a calm, steady hair image.
  */
 export default function RitualStage({ started }: { started: boolean }) {
   const stageRef = useRef<HTMLDivElement>(null);
@@ -149,7 +148,7 @@ export default function RitualStage({ started }: { started: boolean }) {
             <SplitLetters text={SALON.name} className="hero__name serif-display" />
             <p className="hero__tagline">{SALON.tagline}</p>
             <h1 className="hero__headline serif-display">{SALON.heroHeadline}</h1>
-            <div className="stage-static__bottle">
+            <div className="stage-static__hair">
               <img src={HERO_IMG} alt={HERO_ALT} />
             </div>
           </div>
@@ -183,22 +182,24 @@ export default function RitualStage({ started }: { started: boolean }) {
         style={{ height: `${100 + RITUAL_BEATS.length * 95}vh` }}
       >
         <div ref={stickyRef} className="stage__sticky">
+          {/* soft, dark, heavily-blurred hair photo — reinforces the salon feel
+              behind the strands + wordmark without ever reading as a hero photo */}
+          <div className="stage__hair-bg" aria-hidden="true">
+            <img src={HERO_IMG} alt="" />
+          </div>
           <div ref={glowRef} className="stage__glow" aria-hidden="true" />
 
-          {/* Primary: a real-time interactive 3D glass bottle (WebGL).
-              Fallback (touch): the composited photo bottle. */}
+          {/* Primary: the procedural flowing-hair / silk-of-light form (WebGL).
+              Fallback (touch): a calm, steady hair image. */}
           {use3D ? (
             <div ref={canvasRef} className="stage__canvas">
               <Suspense fallback={null}>
-                <Stage3D progressRef={progressRef} />
+                <HairStage progressRef={progressRef} />
               </Suspense>
             </div>
           ) : (
-            <div ref={bottleRef} className="stage__bottle">
-              <div className="stage__bottle-float">
-                <img src={HERO_IMG} alt={HERO_ALT} className="stage__bottle-img" />
-                <span className="stage__bottle-scrim" aria-hidden="true" />
-              </div>
+            <div className="stage__hair-photo">
+              <img src={HERO_IMG} alt={HERO_ALT} />
             </div>
           )}
 

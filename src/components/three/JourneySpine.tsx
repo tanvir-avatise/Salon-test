@@ -1,4 +1,4 @@
-import { useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { useTexture, Environment, Lightformer, Html } from "@react-three/drei";
 import { EffectComposer, Bloom, Vignette } from "@react-three/postprocessing";
@@ -46,7 +46,21 @@ function useBentFrame(w: number, h: number, bend: number) {
 }
 
 function Scene({ progressRef }: { progressRef: React.MutableRefObject<number> }) {
-  const { camera } = useThree();
+  const { camera, size } = useThree();
+  // Narrow / portrait screens: centre the panels and drop their captions
+  // underneath so nothing runs off the edge; pull the camera back to frame it.
+  const compact = size.width < 640;
+  const xOff = compact ? 0 : X_OFF;
+  const tilt = compact ? 0.12 : TILT;
+
+  // Reframe the camera for the compact layout.
+  useEffect(() => {
+    const cam = camera as THREE.PerspectiveCamera;
+    cam.position.z = compact ? 9.4 : 6.6;
+    cam.fov = compact ? 46 : 36;
+    cam.updateProjectionMatrix();
+  }, [camera, compact]);
+
   const textures = useTexture(JOURNEY.map((j) => asset(`images/${j.img}`)));
   useMemo(() => {
     textures.forEach((t) => {
@@ -74,7 +88,7 @@ function Scene({ progressRef }: { progressRef: React.MutableRefObject<number> })
       pts.push(new THREE.Vector3(Math.sin(a) * 0.16, H / 2 - t * H, Math.cos(a) * 0.16));
     }
     const curve = new THREE.CatmullRomCurve3(pts);
-    return new THREE.TubeGeometry(curve, 220, 0.032, 12, false);
+    return new THREE.TubeGeometry(curve, 240, 0.05, 16, false);
   }, []);
 
   const easeSmooth = (x: number) => x * x * (3 - 2 * x);
@@ -127,19 +141,27 @@ function Scene({ progressRef }: { progressRef: React.MutableRefObject<number> })
       <directionalLight position={[3, 4, 5]} intensity={1.1} color="#fff2e9" />
       <spotLight position={[-4, 2, 3]} angle={0.7} penumbra={1} intensity={30} color="#e0b39f" distance={20} />
 
-      {/* the luminous rose-gold strand */}
+      {/* the luminous rose-gold strand — iridescent liquid glass */}
       <group ref={spineRef}>
         <mesh geometry={spineGeo}>
           <meshPhysicalMaterial
-            color="#3a2a2c"
-            metalness={1}
-            roughness={0.18}
+            color="#5a3b44"
+            metalness={0.2}
+            roughness={0.07}
+            transmission={0.6}
+            thickness={0.7}
+            ior={1.46}
+            attenuationColor={new THREE.Color("#c99a8a")}
+            attenuationDistance={1.4}
             iridescence={1}
-            iridescenceIOR={1.35}
-            iridescenceThicknessRange={[120, 620]}
+            iridescenceIOR={1.4}
+            iridescenceThicknessRange={[200, 900]}
+            clearcoat={1}
+            clearcoatRoughness={0.06}
+            specularIntensity={1}
             emissive={new THREE.Color("#c99a8a")}
-            emissiveIntensity={0.55}
-            envMapIntensity={1.4}
+            emissiveIntensity={0.32}
+            envMapIntensity={1.9}
           />
         </mesh>
         <mesh ref={orbRef}>
@@ -152,12 +174,15 @@ function Scene({ progressRef }: { progressRef: React.MutableRefObject<number> })
       <group ref={rigRef}>
         {JOURNEY.map((j, i) => {
           const side = i % 2 === 0 ? -1 : 1;
+          // compact: caption tucked under a centred panel; wide: to the side
+          const capPos: [number, number, number] = compact ? [0, -2.15, 0.3] : [-side * 2.35, 0, 0.3];
+          const capClass = compact ? "rj3-cap rj3-cap--c" : `rj3-cap rj3-cap--${side < 0 ? "l" : "r"}`;
           return (
             <group
               key={j.index}
               ref={(el) => (panelRefs.current[i] = el)}
-              position={[side * X_OFF, -i * Y_GAP, 0]}
-              rotation={[0, -side * TILT, 0]}
+              position={[side * xOff, -i * Y_GAP, 0]}
+              rotation={[0, -side * tilt, 0]}
             >
               <mesh ref={(el) => (meshRefs.current[i] = el)} geometry={geo}>
                 <meshBasicMaterial map={textures[i]} transparent toneMapped={false} side={THREE.DoubleSide} />
@@ -167,14 +192,14 @@ function Scene({ progressRef }: { progressRef: React.MutableRefObject<number> })
                 <lineBasicMaterial color="#e8c3b2" transparent opacity={0.4} toneMapped={false} />
               </lineLoop>
               <Html
-                position={[-side * 2.35, 0, 0.3]}
+                position={capPos}
                 center
                 distanceFactor={7.5}
                 zIndexRange={[20, 0]}
                 pointerEvents="none"
                 wrapperClass="rj3-html"
               >
-                <div ref={(el) => (capRefs.current[i] = el)} className={`rj3-cap rj3-cap--${side < 0 ? "l" : "r"}`}>
+                <div ref={(el) => (capRefs.current[i] = el)} className={capClass}>
                   <span className="rj3-cap-index">
                     {j.index} <em>/</em> {j.title}
                   </span>

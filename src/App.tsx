@@ -9,6 +9,7 @@ import Nav from "./components/Nav";
 import RitualStage from "./components/RitualStage";
 import RitualJourney from "./components/RitualJourney";
 import Transformation from "./components/Transformation";
+import MotionMoment from "./components/MotionMoment";
 import Services from "./components/Services";
 import Craft from "./components/Craft";
 import Products from "./components/Products";
@@ -58,6 +59,7 @@ export default function App() {
         <RitualStage started={started} />
         <RitualJourney />
         <Transformation />
+        <MotionMoment />
         <Services />
         <Craft />
         <Products />

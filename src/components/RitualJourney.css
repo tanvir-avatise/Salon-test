@@ -70,6 +70,7 @@
 }
 .rj3-cap--l { text-align: right; }
 .rj3-cap--r { text-align: left; }
+.rj3-cap--c { text-align: center; max-width: 24ch; }
 .rj3-cap-index {
   display: block;
   font-family: var(--sans);
