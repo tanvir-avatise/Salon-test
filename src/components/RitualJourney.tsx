@@ -1,28 +1,30 @@
-import { useEffect, useRef, useState } from "react";
-import { prefersReducedMotion } from "../lib/motion";
+import { Suspense, lazy, useEffect, useRef, useState } from "react";
+import { isTouch, prefersReducedMotion } from "../lib/motion";
 import { JOURNEY } from "../lib/content";
 import { asset } from "../lib/asset";
 import "./RitualJourney.css";
 
+const JourneySpine = lazy(() => import("./three/JourneySpine"));
+
 /**
  * The Ritual Journey — a scroll-scrubbed passage through the five service
- * steps. A full-viewport sticky stage holds a slender glowing "spine" that
- * rotates and advances as you scroll; the journey images are threaded along
- * it, coming into focus one at a time with their caption. A single scroll
- * progress (0 → 1 across a tall container) drives the active step, the
- * cross-fade/scale, the spine rotation and a subtle parallax.
+ * steps, rendered as a true 3D threaded backbone (React-Three-Fiber). A tall
+ * sticky container drives a single scroll progress (0 → 1); that value is
+ * shared by ref with the WebGL scene, where a luminous rose-gold strand
+ * rotates and the five journey photos — bent onto curved planes — are threaded
+ * along it, each coming forward into focus in turn with its own caption.
  *
- * Under reduced motion it falls back to a calm stacked sequence.
+ * An HTML overlay carries the intro heading, the numbered node markers and the
+ * progress bar, all synced to the active station. Under reduced motion (or on
+ * touch, where WebGL is costly) it falls back to a calm stacked sequence.
  */
 export default function RitualJourney() {
   const sectionRef = useRef<HTMLDivElement>(null);
   const headRef = useRef<HTMLDivElement>(null);
-  const spineRef = useRef<HTMLDivElement>(null);
-  const orbRef = useRef<HTMLSpanElement>(null);
   const barRef = useRef<HTMLSpanElement>(null);
-  const stepRefs = useRef<(HTMLDivElement | null)[]>([]);
-  const nodeRefs = useRef<(HTMLSpanElement | null)[]>([]);
-  const [reduced] = useState(() => prefersReducedMotion());
+  const nodeRefs = useRef<(HTMLLIElement | null)[]>([]);
+  const progressRef = useRef(0);
+  const [reduced] = useState(() => prefersReducedMotion() || isTouch());
 
   const n = JOURNEY.length;
 
@@ -35,36 +37,17 @@ export default function RitualJourney() {
       const rect = section.getBoundingClientRect();
       const total = rect.height - window.innerHeight;
       const p = Math.min(1, Math.max(0, -rect.top / Math.max(1, total)));
+      progressRef.current = p;
 
       // intro head fades out as the journey starts
       if (headRef.current) {
-        const h = Math.min(1, Math.max(0, (0.06 - p) / 0.06));
+        const h = Math.min(1, Math.max(0, (0.07 - p) / 0.07));
         headRef.current.style.opacity = String(h);
-        headRef.current.style.transform = `translateY(${(1 - h) * -20}px)`;
+        headRef.current.style.transform = `translate(-50%, ${(1 - h) * -20}px)`;
       }
 
-      // which step is active (0 .. n-1)
-      const activeF = p * (n - 1);
-      const active = Math.round(activeF);
-      stepRefs.current.forEach((el, i) => {
-        if (!el) return;
-        const d = activeF - i;
-        const near = Math.max(0, 1 - Math.abs(d));
-        const opacity = Math.max(0, 1 - Math.abs(d) * 1.5);
-        const scale = 0.84 + near * 0.16;
-        // slide from the step's side + a little parallax with scroll distance
-        const side = i % 2 === 0 ? -1 : 1;
-        const x = side * (1 - near) * 8; // vw, eases toward centre when active
-        const y = d * 26; // px parallax
-        el.style.opacity = String(opacity);
-        el.style.transform = `translate(-50%, -50%) translate(${x}vw, ${y}px) scale(${scale})`;
-        el.style.zIndex = String(near > 0.5 ? 3 : 2);
-        el.style.pointerEvents = opacity > 0.6 ? "auto" : "none";
-      });
-
-      // spine: rotate through 3D + travelling orb + active node
-      if (spineRef.current) spineRef.current.style.transform = `rotateY(${-20 + p * 40}deg) rotateZ(${(p - 0.5) * 4}deg)`;
-      if (orbRef.current) orbRef.current.style.top = `${8 + p * 84}%`;
+      // which station is active (0 .. n-1)
+      const active = Math.round(p * (n - 1));
       nodeRefs.current.forEach((nd, i) => {
         if (nd) nd.classList.toggle("is-active", i === active);
       });
@@ -80,7 +63,7 @@ export default function RitualJourney() {
     e.currentTarget.style.opacity = "0";
   };
 
-  /* ---------- reduced-motion: stacked sequence ---------- */
+  /* ---------- reduced-motion / touch: stacked sequence ---------- */
   if (reduced) {
     return (
       <section id="journey" className="rj-static section" aria-label="The Ritual Journey">
@@ -105,68 +88,43 @@ export default function RitualJourney() {
     );
   }
 
-  /* ---------- motion: scroll-scrubbed spine ---------- */
+  /* ---------- motion: 3D threaded backbone ---------- */
   return (
     <section
       id="journey"
       ref={sectionRef}
       className="rj"
       aria-label="The Ritual Journey"
-      style={{ height: `${100 + n * 80}vh` }}
+      style={{ height: `${100 + n * 90}vh` }}
     >
       <div className="rj-sticky">
+        {/* the WebGL backbone fills the stage */}
+        <div className="rj-canvas">
+          <Suspense fallback={null}>
+            <JourneySpine progressRef={progressRef} />
+          </Suspense>
+        </div>
+
+        {/* intro heading, fades as the journey begins */}
         <div ref={headRef} className="rj-head">
           <span className="eyebrow">The Ritual Journey</span>
           <h2 className="section-title">Five steps,<br />one transformation.</h2>
           <span className="rj-head-cue">Scroll the journey</span>
         </div>
 
-        <div className="rj-stage">
-          {/* glowing spine */}
-          <div className="rj-spine-wrap" aria-hidden="true">
-            <div ref={spineRef} className="rj-spine">
-              <span className="rj-rail" />
-              {JOURNEY.map((s, i) => (
-                <span
-                  key={s.index}
-                  ref={(el) => (nodeRefs.current[i] = el)}
-                  className="rj-node"
-                  style={{ top: `${8 + (i / (n - 1)) * 84}%` }}
-                >
-                  <i className="rj-node-dot" />
-                  <em className="rj-node-num">{s.index}</em>
-                </span>
-              ))}
-              <span ref={orbRef} className="rj-orb" />
-            </div>
-          </div>
-
-          {/* threaded step cards */}
+        {/* numbered node markers, synced to the active station */}
+        <ol className="rj-nodes" aria-hidden="true">
           {JOURNEY.map((s, i) => (
-            <div
+            <li
               key={s.index}
-              ref={(el) => (stepRefs.current[i] = el)}
-              className={`rj-step rj-step--${i % 2 === 0 ? "left" : "right"}`}
+              ref={(el) => (nodeRefs.current[i] = el)}
+              className="rj-node"
             >
-              <figure className="rj-card">
-                <img
-                  src={asset(`images/${s.img}`)}
-                  alt={`${s.title} — ${s.line}`}
-                  loading="lazy"
-                  decoding="async"
-                  onError={hide}
-                />
-                <span className="rj-card-glow" aria-hidden="true" />
-              </figure>
-              <div className="rj-caption">
-                <span className="rj-index">
-                  {s.index} <em>/</em> {s.title}
-                </span>
-                <p className="rj-line serif-display">{s.line}</p>
-              </div>
-            </div>
+              <i className="rj-node-dot" />
+              <em className="rj-node-num">{s.index}</em>
+            </li>
           ))}
-        </div>
+        </ol>
 
         <div className="rj-progress" aria-hidden="true">
           <span ref={barRef} />

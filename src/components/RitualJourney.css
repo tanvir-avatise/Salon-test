@@ -1,4 +1,4 @@
-/* ============ The Ritual Journey (scroll-scrubbed) ============ */
+/* ============ The Ritual Journey (3D threaded backbone) ============ */
 .rj {
   position: relative;
   width: 100%;
@@ -12,10 +12,21 @@
   height: 100svh;
   overflow: hidden;
   background:
-    radial-gradient(120vmax 80vmax at 50% 42%, rgba(90, 50, 60, 0.5), transparent 60%),
-    radial-gradient(60vmax 60vmax at 78% 30%, rgba(201, 154, 138, 0.16), transparent 62%),
+    radial-gradient(120vmax 80vmax at 50% 44%, rgba(90, 50, 60, 0.5), transparent 60%),
+    radial-gradient(60vmax 60vmax at 78% 28%, rgba(201, 154, 138, 0.16), transparent 62%),
     linear-gradient(180deg, #1b1418, #120d0f 70%);
-  perspective: 1400px;
+}
+
+/* the WebGL canvas fills the stage */
+.rj-canvas {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+.rj-canvas canvas {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
 }
 
 /* intro heading */
@@ -31,6 +42,7 @@
   gap: 1rem;
   width: min(90vw, 40ch);
   pointer-events: none;
+  will-change: opacity, transform;
 }
 .rj-head .section-title {
   color: var(--text-on-dark);
@@ -43,67 +55,71 @@
   margin-top: 0.5rem;
 }
 
-/* stage */
-.rj-stage {
-  position: absolute;
-  inset: 0;
-  transform-style: preserve-3d;
+/* --- in-scene panel captions (drei <Html>) --- */
+.rj3-html {
+  pointer-events: none !important;
+  user-select: none;
+}
+.rj3-cap {
+  width: max-content;
+  max-width: 22ch;
+  opacity: 0;
+  will-change: opacity;
+  transition: opacity 0.12s linear;
+  text-shadow: 0 2px 30px rgba(11, 7, 8, 0.85);
+}
+.rj3-cap--l { text-align: right; }
+.rj3-cap--r { text-align: left; }
+.rj3-cap-index {
+  display: block;
+  font-family: var(--sans);
+  font-size: 0.74rem;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--rose-gold);
+  margin-bottom: 0.9rem;
+  white-space: nowrap;
+}
+.rj3-cap-index em {
+  font-style: normal;
+  opacity: 0.5;
+  margin: 0 0.35em;
+}
+.rj3-cap-line {
+  font-family: var(--serif);
+  font-weight: 500;
+  font-size: clamp(1.7rem, 3vw, 3rem);
+  line-height: 1.08;
+  color: var(--text-on-dark);
 }
 
-/* --- glowing spine --- */
-.rj-spine-wrap {
+/* --- numbered node markers (HTML overlay, synced to active station) --- */
+.rj-nodes {
   position: absolute;
+  left: clamp(1.4rem, 4vw, 3.4rem);
   top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  height: 74vh;
-  width: 120px;
-  transform-style: preserve-3d;
-  z-index: 1;
-}
-.rj-spine {
-  position: relative;
-  height: 100%;
-  width: 100%;
-  transform-style: preserve-3d;
-  will-change: transform;
-}
-.rj-rail {
-  position: absolute;
-  left: 50%;
-  top: 0;
-  bottom: 0;
-  width: 2px;
-  transform: translateX(-50%);
-  background: linear-gradient(
-    180deg,
-    transparent,
-    rgba(201, 154, 138, 0.15) 8%,
-    rgba(232, 195, 178, 0.9) 50%,
-    rgba(201, 154, 138, 0.15) 92%,
-    transparent
-  );
-  box-shadow: 0 0 18px 2px rgba(201, 154, 138, 0.55), 0 0 60px 6px rgba(201, 154, 138, 0.25);
+  transform: translateY(-50%);
+  z-index: 6;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(0.9rem, 2.4vh, 1.6rem);
+  pointer-events: none;
 }
 .rj-node {
-  position: absolute;
-  left: 50%;
-  transform: translate(-50%, -50%);
   display: flex;
   align-items: center;
-  gap: 0.7rem;
+  gap: 0.8rem;
 }
 .rj-node-dot {
-  width: 9px;
-  height: 9px;
+  width: 8px;
+  height: 8px;
   border-radius: 50%;
-  background: var(--rose-gold);
-  box-shadow: 0 0 12px rgba(201, 154, 138, 0.8);
-  transition: transform 0.5s var(--ease-indulgent), background 0.5s var(--ease-soft);
+  background: rgba(201, 154, 138, 0.45);
+  box-shadow: 0 0 0 rgba(201, 154, 138, 0);
+  transition: transform 0.5s var(--ease-indulgent), background 0.5s var(--ease-soft),
+    box-shadow 0.5s var(--ease-soft);
 }
 .rj-node-num {
-  position: absolute;
-  left: 22px;
   font-family: var(--sans);
   font-size: 0.62rem;
   letter-spacing: 0.24em;
@@ -112,96 +128,12 @@
   transition: color 0.5s var(--ease-soft);
 }
 .rj-node.is-active .rj-node-dot {
-  transform: scale(1.9);
+  transform: scale(1.7);
   background: #fff;
+  box-shadow: 0 0 14px 2px rgba(232, 195, 178, 0.8);
 }
 .rj-node.is-active .rj-node-num {
   color: var(--rose-gold);
-}
-.rj-orb {
-  position: absolute;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  background: radial-gradient(circle, #fff, rgba(201, 154, 138, 0.6) 50%, transparent 72%);
-  box-shadow: 0 0 26px 8px rgba(232, 195, 178, 0.7);
-  will-change: top;
-}
-
-/* --- threaded step cards --- */
-.rj-step {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: min(92vw, 1080px);
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  align-items: center;
-  column-gap: clamp(2rem, 8vw, 7rem);
-  will-change: transform, opacity;
-}
-.rj-card {
-  position: relative;
-  justify-self: end;
-  width: clamp(220px, 27vw, 380px);
-  aspect-ratio: 4 / 5;
-  border-radius: 6px;
-  overflow: hidden;
-  box-shadow: 0 40px 110px -36px rgba(0, 0, 0, 0.8);
-  background: radial-gradient(ellipse at 50% 40%, rgba(201, 154, 138, 0.2), #171015 70%);
-}
-.rj-card img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: 50% 35%;
-}
-.rj-card-glow {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  box-shadow: inset 0 0 60px rgba(23, 16, 21, 0.5);
-  border: 1px solid rgba(232, 195, 178, 0.18);
-  border-radius: 6px;
-}
-.rj-caption {
-  justify-self: start;
-  max-width: 22ch;
-}
-.rj-index {
-  display: block;
-  font-family: var(--sans);
-  font-size: 0.78rem;
-  letter-spacing: 0.24em;
-  text-transform: uppercase;
-  color: var(--rose-gold);
-  margin-bottom: 1.1rem;
-}
-.rj-index em {
-  font-style: normal;
-  opacity: 0.5;
-  margin: 0 0.3em;
-}
-.rj-line {
-  font-size: clamp(1.6rem, 3.2vw, 3rem);
-  font-weight: 500;
-  line-height: 1.1;
-  color: var(--text-on-dark);
-  text-shadow: 0 2px 30px rgba(11, 7, 8, 0.7);
-}
-
-/* right-side steps: card on the right, caption on the left */
-.rj-step--right .rj-card {
-  order: 2;
-  justify-self: start;
-}
-.rj-step--right .rj-caption {
-  order: 1;
-  justify-self: end;
-  text-align: right;
 }
 
 /* progress bar */
@@ -222,25 +154,14 @@
   background: linear-gradient(90deg, var(--rose-gold-lo), var(--rose-gold));
 }
 
-/* narrow screens: stack card over caption, hide the 3D spine */
+/* narrow screens: tuck the marker column in a touch */
 @media (max-width: 760px) {
-  .rj-spine-wrap { opacity: 0.5; width: 40px; }
+  .rj-nodes { left: 1rem; gap: 0.8rem; }
   .rj-node-num { display: none; }
-  .rj-step,
-  .rj-step--right {
-    grid-template-columns: 1fr;
-    row-gap: 1.6rem;
-    justify-items: center;
-    text-align: center;
-    width: 88vw;
-  }
-  .rj-step .rj-card,
-  .rj-step--right .rj-card { justify-self: center; order: 0; width: min(70vw, 300px); }
-  .rj-step .rj-caption,
-  .rj-step--right .rj-caption { justify-self: center; order: 1; text-align: center; }
+  .rj3-cap-line { font-size: clamp(1.4rem, 6vw, 2rem); }
 }
 
-/* ============ reduced-motion stacked fallback ============ */
+/* ============ reduced-motion / touch stacked fallback ============ */
 .rj-static {
   background: linear-gradient(180deg, var(--stage-1), var(--stage-0));
 }
@@ -270,4 +191,19 @@
   background: radial-gradient(ellipse at 50% 40%, rgba(201, 154, 138, 0.18), #171015 70%);
 }
 .rj-static__media img { width: 100%; height: 100%; object-fit: cover; }
-.rj-static__copy .rj-line { font-family: var(--serif); }
+.rj-static .rj-index {
+  display: block;
+  font-family: var(--sans);
+  font-size: 0.78rem;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--rose-gold);
+  margin-bottom: 1.1rem;
+}
+.rj-static .rj-line {
+  font-family: var(--serif);
+  font-weight: 500;
+  font-size: clamp(1.6rem, 3.2vw, 2.6rem);
+  line-height: 1.1;
+  color: var(--text-on-dark);
+}
