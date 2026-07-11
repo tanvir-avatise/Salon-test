@@ -73,13 +73,18 @@ body {
    reads as a gentle peak rather than a hard break. */
 .flow-top {
   position: relative;
+  /* Warm plum is held CONTINUOUSLY across the hero → Journey seam (the seam
+     sits ~41% down the wrapper now that the hero is 3 beats) so there is no
+     dark band then a lighter band — the boundary tone matches the top edge of
+     the Journey glow. */
   background: linear-gradient(
     180deg,
     #140f12 0%,
-    #1a1418 20%,
-    #221a22 42%,
-    #2a2029 51%,
-    #1d1519 70%,
+    #1a1418 16%,
+    #241b24 30%,
+    #2a2029 36%,
+    #2a2029 52%,
+    #1d1519 74%,
     #130e11 100%
   );
 }

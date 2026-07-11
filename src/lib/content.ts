@@ -29,11 +29,9 @@ export const SALON = {
 
 /* Section 3 — The Ritual: one line of care-and-craft copy per beat. */
 export const RITUAL_BEATS: { index: string; line: string }[] = [
-  { index: "01", line: "We begin in quiet — a consultation before a single strand is touched." },
-  { index: "02", line: "Warm water, slow hands. The scalp softens; tension lets go." },
-  { index: "03", line: "Colour is mixed by eye, weighed to the gram, warmed to the skin." },
-  { index: "04", line: "Light finds the cut. Every section falls the way it was meant to." },
-  { index: "05", line: "A final gloss — and the surface begins to catch the room." },
+  { index: "01", line: "Warm water, slow hands. The scalp softens and the world goes quiet." },
+  { index: "02", line: "Colour mixed by eye, the cut shaped to catch the light." },
+  { index: "03", line: "A final gloss — and the surface begins to catch the room." },
 ];
 
 /* Section 5 — Signature Services */

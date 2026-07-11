@@ -11,11 +11,23 @@
   height: 100vh;
   height: 100svh;
   overflow: hidden;
-  /* only soft plum accents now — the base colour is the continuous flow wash,
-     so the hero → Journey seam disappears */
+  background: transparent; /* base colour comes from the continuous flow wash */
+}
+/* Soft plum accents live on a masked layer whose top ~16vh fades to
+   transparent, so the glow EASES in as the Journey enters rather than
+   hard-starting against the darker hero above — this kills the horizontal
+   seam. Sits behind the WebGL canvas (z-index 1) and all copy (z-index 6). */
+.rj-sticky::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
   background:
-    radial-gradient(120vmax 80vmax at 50% 46%, rgba(90, 50, 60, 0.42), transparent 60%),
-    radial-gradient(60vmax 60vmax at 78% 28%, rgba(201, 154, 138, 0.14), transparent 62%);
+    radial-gradient(120vmax 80vmax at 50% 52%, rgba(90, 50, 60, 0.42), transparent 60%),
+    radial-gradient(60vmax 60vmax at 78% 34%, rgba(201, 154, 138, 0.14), transparent 62%);
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 16%, #000 92%, transparent 100%);
+  mask-image: linear-gradient(to bottom, transparent 0, #000 16%, #000 92%, transparent 100%);
 }
 
 /* the WebGL canvas fills the stage */
