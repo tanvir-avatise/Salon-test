@@ -66,10 +66,25 @@
   bottom: clamp(4rem, 16vh, 9rem);
   transform: translateX(-50%);
   width: min(90vw, 40ch);
+  height: 8rem;
   text-align: center;
   z-index: 2;
   pointer-events: none;
+}
+/* the two staged lines share the same anchor and crossfade */
+.mm-beat {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
   will-change: opacity, transform;
+}
+.mm-copy--static {
+  position: absolute;
+  height: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }
 .mm-kicker {
   display: block;

@@ -32,7 +32,10 @@ export default function Preloader({ onDone }: { onDone: () => void }) {
     const letters = nameRef.current!.querySelectorAll("span[aria-hidden]");
     const counter = { v: 0 };
 
-    const tl = gsap.timeline({ onComplete: finish });
+    // Two phases: fill/reveal, then MELT the cream screen into the hero's dark
+    // plum. The dark wordmark dissolves into the darkening field and the hero
+    // reveals beneath during the melt — no cream-to-black cut.
+    const tl = gsap.timeline({ onComplete: () => setGone(true) });
 
     tl.to(counter, {
       v: 100,
@@ -57,17 +60,23 @@ export default function Preloader({ onDone }: { onDone: () => void }) {
         },
         "-=0.7"
       )
-      .to({}, { duration: 0.45 })
+      .to({}, { duration: 0.35 })
       .to(
         [countRef.current, ".preloader__track"],
         { opacity: 0, duration: 0.5, ease: "power2.out" },
         "<"
       )
-      .to(root, {
-        yPercent: -100,
-        duration: 1.2,
-        ease: "expo.inOut",
-      })
+      // melt cream → hero dark plum first (pure DOM, always smooth)…
+      .to(root, { backgroundColor: "#140f12", duration: 1.1, ease: "power2.inOut" })
+      .to(
+        ".preloader__inner",
+        { opacity: 0, duration: 0.7, ease: "power2.out" },
+        "-=0.45"
+      )
+      // …then hand off once the field is already dark, so the hero's WebGL
+      // compile lands invisibly (dark-on-dark) behind the fading screen
+      .add(onDone)
+      .to(root, { autoAlpha: 0, duration: 0.8, ease: "power2.out" })
       .set(root, { pointerEvents: "none" });
 
     return () => {

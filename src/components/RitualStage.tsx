@@ -39,6 +39,8 @@ export default function RitualStage({ started }: { started: boolean }) {
   const glowRef = useRef<HTMLDivElement>(null);
   const nameRef = useRef<HTMLSpanElement>(null);
   const progressRef = useRef(0);
+  const velocityRef = useRef(0);
+  const lastYRef = useRef(0);
 
   const [reduced] = useState(() => prefersReducedMotion());
   const [use3D] = useState(() => !prefersReducedMotion() && !isTouch());
@@ -75,19 +77,17 @@ export default function RitualStage({ started }: { started: boolean }) {
     const beats = beatRefs.current;
     let raf = 0;
 
-    const lerpColor = (t: number) => {
-      // stage-0 (#171215) → warm blush glow (#2a2024 tinted)
-      const a = [23, 18, 21];
-      const b = [46, 34, 40];
-      const c = a.map((v, i) => Math.round(v + (b[i] - v) * t));
-      return `rgb(${c[0]}, ${c[1]}, ${c[2]})`;
-    };
-
     const tick = () => {
       const rect = stage.getBoundingClientRect();
       const total = rect.height - window.innerHeight;
       const p = Math.min(1, Math.max(0, -rect.top / Math.max(1, total)));
       progressRef.current = p;
+
+      // smoothed, self-decaying scroll velocity feeds the hero's gesture whip
+      const y = window.scrollY;
+      const raw = y - lastYRef.current;
+      lastYRef.current = y;
+      velocityRef.current = Math.max(-1, Math.min(1, velocityRef.current * 0.85 + (raw / 45) * 0.15));
 
       // Hero fades out over the first sliver of scroll.
       const heroP = Math.min(1, Math.max(0, (0.12 - p) / 0.12));
@@ -123,9 +123,8 @@ export default function RitualStage({ started }: { started: boolean }) {
       if (bottleRef.current) bottleRef.current.style.opacity = bottleDim;
       if (canvasRef.current) canvasRef.current.style.opacity = bottleDim;
 
-      // Backdrop warms; the glow swells.
-      if (stickyRef.current)
-        stickyRef.current.style.backgroundColor = lerpColor(p);
+      // The glow swells as the ritual deepens (the base colour now comes from
+      // the shared flow gradient behind both sections, so no seam appears).
       if (glowRef.current) {
         glowRef.current.style.opacity = String(0.15 + p * 0.55);
         glowRef.current.style.transform = `translate(-50%, -50%) scale(${0.7 + p * 0.9})`;
@@ -193,9 +192,14 @@ export default function RitualStage({ started }: { started: boolean }) {
               Fallback (touch): a calm, steady hair image. */}
           {use3D ? (
             <div ref={canvasRef} className="stage__canvas">
-              <Suspense fallback={null}>
-                <HairStage progressRef={progressRef} />
-              </Suspense>
+              {/* mount only once the intro has handed off, so the WebGL compile
+                  never competes with the preloader melt (it lands on the dark
+                  field, invisibly) */}
+              {started && (
+                <Suspense fallback={null}>
+                  <HairStage progressRef={progressRef} velocityRef={velocityRef} />
+                </Suspense>
+              )}
             </div>
           ) : (
             <div className="stage__hair-photo">

@@ -2,7 +2,7 @@
 .stage {
   position: relative;
   width: 100%;
-  background: var(--stage-0);
+  background: transparent; /* colour comes from the shared .flow-top wash */
 }
 
 .stage__sticky {
@@ -11,7 +11,7 @@
   height: 100vh;
   height: 100svh;
   overflow: hidden;
-  background-color: var(--stage-0);
+  background-color: transparent;
 }
 
 .stage__canvas {

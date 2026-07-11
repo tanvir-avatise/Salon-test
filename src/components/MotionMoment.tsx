@@ -18,7 +18,8 @@ export default function MotionMoment() {
   const sectionRef = useRef<HTMLElement>(null);
   const mediaRef = useRef<HTMLDivElement>(null);
   const sheenRef = useRef<HTMLSpanElement>(null);
-  const copyRef = useRef<HTMLDivElement>(null);
+  const beat1Ref = useRef<HTMLDivElement>(null);
+  const beat2Ref = useRef<HTMLDivElement>(null);
   const barRef = useRef<HTMLSpanElement>(null);
   const [reduced] = useState(() => prefersReducedMotion());
 
@@ -45,15 +46,18 @@ export default function MotionMoment() {
         sheenRef.current.style.transform = `translateX(${-70 + p * 240}%) rotate(18deg)`;
         sheenRef.current.style.opacity = String(Math.sin(p * Math.PI) * 0.7);
       }
-      // the line resolves in over the first half, holds, drifts on exit
-      if (copyRef.current) {
-        const inP = Math.min(1, p / 0.42);
-        const outP = Math.max(0, (p - 0.82) / 0.18);
+      // two staged lines: the first resolves in and hands off to the second
+      const stage = (el: HTMLDivElement | null, inA: number, inB: number, outA: number, outB: number) => {
+        if (!el) return;
+        const inP = Math.min(1, Math.max(0, (p - inA) / (inB - inA)));
+        const outP = Math.min(1, Math.max(0, (p - outA) / (outB - outA)));
         const op = Math.max(0, inP - outP);
-        copyRef.current.style.opacity = String(op);
-        copyRef.current.style.transform = `translateY(${(1 - inP) * 26 + outP * -24}px)`;
-        copyRef.current.style.letterSpacing = `${0.14 - inP * 0.1}em`;
-      }
+        el.style.opacity = String(op);
+        el.style.transform = `translateY(${(1 - inP) * 26 + outP * -24}px)`;
+        el.style.letterSpacing = `${0.14 - inP * 0.1}em`;
+      };
+      stage(beat1Ref.current, 0.0, 0.34, 0.44, 0.6);
+      stage(beat2Ref.current, 0.54, 0.82, 0.92, 1.0);
       if (barRef.current) barRef.current.style.transform = `scaleX(${p})`;
 
       raf = requestAnimationFrame(tick);
@@ -72,9 +76,10 @@ export default function MotionMoment() {
         <div className="mm-media mm-media--static">
           <img src={HAIR} alt="" onError={hide} />
         </div>
-        <div className="mm-copy">
+        <div className="mm-copy mm-copy--static">
           <span className="mm-kicker">In motion</span>
           <p className="mm-line serif-display">Every strand, alive with light.</p>
+          <p className="mm-line serif-display">Movement is the finishing touch.</p>
         </div>
       </section>
     );
@@ -88,9 +93,14 @@ export default function MotionMoment() {
         </div>
         <span ref={sheenRef} className="mm-sheen" aria-hidden="true" />
         <span className="mm-vignette" aria-hidden="true" />
-        <div ref={copyRef} className="mm-copy">
-          <span className="mm-kicker">In motion</span>
-          <p className="mm-line serif-display">Every strand, alive with light.</p>
+        <div className="mm-copy">
+          <div ref={beat1Ref} className="mm-beat">
+            <span className="mm-kicker">In motion</span>
+            <p className="mm-line serif-display">Every strand, alive with light.</p>
+          </div>
+          <div ref={beat2Ref} className="mm-beat">
+            <p className="mm-line serif-display">Movement is the finishing touch.</p>
+          </div>
         </div>
         <div className="mm-progress" aria-hidden="true">
           <span ref={barRef} />

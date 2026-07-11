@@ -56,8 +56,12 @@ export default function App() {
       <Nav lenis={lenis} />
 
       <main>
-        <RitualStage started={started} />
-        <RitualJourney />
+        {/* One continuous background carries colour across intro → hero →
+            Journey so the top of the site reads as a single cinematic flow. */}
+        <div className="flow-top">
+          <RitualStage started={started} />
+          <RitualJourney />
+        </div>
         <Transformation />
         <MotionMoment />
         <Services />

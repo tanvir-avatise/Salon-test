@@ -25,11 +25,13 @@ function Rig() {
 
 export default function HairStage({
   progressRef,
+  velocityRef,
   dpr = [1, 1.75],
   particleCount = 420,
   reducedMotion = false,
 }: {
   progressRef: React.MutableRefObject<number>;
+  velocityRef?: React.MutableRefObject<number>;
   dpr?: [number, number];
   particleCount?: number;
   reducedMotion?: boolean;
@@ -51,7 +53,7 @@ export default function HairStage({
         <pointLight position={[2.5, -2, 3]} intensity={10} color="#c99a8a" distance={14} />
 
         <Float speed={reducedMotion ? 0 : 0.8} rotationIntensity={0} floatIntensity={reducedMotion ? 0 : 0.3} floatingRange={[-0.06, 0.08]}>
-          <HairRibbons progressRef={progressRef} reducedMotion={reducedMotion} />
+          <HairRibbons progressRef={progressRef} velocityRef={velocityRef} reducedMotion={reducedMotion} />
         </Float>
 
         <Particles count={particleCount} />

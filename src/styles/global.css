@@ -67,6 +67,23 @@ body {
   cursor: none; /* replaced by custom cursor; falls back when disabled */
 }
 
+/* One continuous vertical wash behind the hero + Ritual Journey. Both sections
+   render transparent over this, so intro → hero → Journey share one colour
+   field with no flat cuts; it warms toward the hero/Journey seam so the join
+   reads as a gentle peak rather than a hard break. */
+.flow-top {
+  position: relative;
+  background: linear-gradient(
+    180deg,
+    #140f12 0%,
+    #1a1418 20%,
+    #221a22 42%,
+    #2a2029 51%,
+    #1d1519 70%,
+    #130e11 100%
+  );
+}
+
 /* Restore native cursor when custom cursor is disabled (touch / reduced-motion) */
 body.native-cursor,
 body.native-cursor * {

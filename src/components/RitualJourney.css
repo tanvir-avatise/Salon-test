@@ -2,7 +2,7 @@
 .rj {
   position: relative;
   width: 100%;
-  background: var(--stage-0);
+  background: transparent; /* colour comes from the shared .flow-top wash */
 }
 
 .rj-sticky {
@@ -11,10 +11,11 @@
   height: 100vh;
   height: 100svh;
   overflow: hidden;
+  /* only soft plum accents now — the base colour is the continuous flow wash,
+     so the hero → Journey seam disappears */
   background:
-    radial-gradient(120vmax 80vmax at 50% 44%, rgba(90, 50, 60, 0.5), transparent 60%),
-    radial-gradient(60vmax 60vmax at 78% 28%, rgba(201, 154, 138, 0.16), transparent 62%),
-    linear-gradient(180deg, #1b1418, #120d0f 70%);
+    radial-gradient(120vmax 80vmax at 50% 46%, rgba(90, 50, 60, 0.42), transparent 60%),
+    radial-gradient(60vmax 60vmax at 78% 28%, rgba(201, 154, 138, 0.14), transparent 62%);
 }
 
 /* the WebGL canvas fills the stage */
